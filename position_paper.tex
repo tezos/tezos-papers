@@ -1,10 +1,8 @@
 \documentclass[letterpaper]{article}
-\author{L.M Goodman}
-\date{August 3, 2014}
-\title{Tezos: A Self-Amending Crypto-Ledger \\ Position Paper}
-\usepackage[utf8]{inputenc}
 
-%%\setlength{\parskip}{\baselineskip}
+\usepackage[UTF8]{ctex}
+\usepackage[utf8x]{inputenc}
+\usepackage{textcase}
 \usepackage{amsfonts}
 \usepackage{url}
 \usepackage[hidelinks]{hyperref}
@@ -12,6 +10,12 @@
 \usepackage{listings}
 \usepackage{color}
 \usepackage{epigraph}
+
+\author{L.M Goodman}
+\date{August 3, 2014}
+\title{Tezos: 一个自我修复的加密账本 \\ 目的聲明}
+
+%%\setlength{\parskip}{\baselineskip}
 %\epigraphfontsize{\small\itshape}
 \setlength\epigraphwidth{4.6cm}
 \setlength\epigraphrule{0pt}
@@ -30,623 +34,1044 @@
 {--- \textup{Pierre-Joseph Proudhon}}
 
 \begin{abstract}
-The popularization of Bitcoin, a decentralized crypto-currency has inspired the
-production of several alternative, or ``alt'', currencies. Ethereum, CryptoNote,
-and Zerocash all represent unique contributions to the crypto-currency space. 
-Although most alt currencies harbor their own source of innovation, they have
-no means of adopting the innovations of other currencies which may succeed them.
-We aim to remedy the potential for atrophied evolution in the crypto-currency 
-space by presenting Tezos, a generic and self-amending crypto-ledger.
+%% The popularization of Bitcoin, a decentralized crypto-currency has
+%% inspired the production of several alternative, or ``alt'',
+%% currencies. Ethereum, CryptoNote, and Zerocash all represent unique
+%% contributions to the crypto-currency space.  Although most alt
+%% currencies harbor their own source of innovation, they have no
+%% means of adopting the innovations of other currencies which may
+%% succeed them.  We aim to remedy the potential for atrophied
+%% evolution in the crypto-currency space by presenting Tezos, a
+%% generic and self-amending crypto-ledger.
+随着一个去中心化的加密货币比特币的流行，效仿者，也就是所谓的竞争货币，
+纷纷出现。包括以太坊，CryptoNote,以及零币在内的加密货币都对加密货币空
+间做出了独特的贡献。尽管很多替代货币有着自己的创新，但是由于彼此孤立，
+没有办法来接纳其它货币的创新来让自己变得更加成功。我们希望通过Tezos，
+一个一般性的具有自我修正性的加密账本，来改善这种无意义的消耗和浪费。
 
-Tezos can instanciate any blockchain based protocol. Its seed protocol specifies
-a procedure for stakeholders to approve amendments to the protocol,
-\emph{including} amendments to the amendment procedure itself.
-Upgrades to Tezos are staged through a testing environment to allow
-stakeholders to recall potentially problematic amendments.
+%% Tezos can instanciate any blockchain based protocol. Its seed
+%% protocol specifies a procedure for stakeholders to approve
+%% amendments to the protocol, \emph{including} amendments to the
+%% amendment procedure itself.  Upgrades to Tezos are staged through a
+%% testing environment to allow stakeholders to recall potentially
+%% problematic amendments.
+Tezos可以吸纳任何一个一个基于区块链的协议。它将这些协议变成一个子协议,
+并规定一个流程来让持币者来对协议的改变进行审核和批准，\emph{包括}对协
+议改变的改变。对于Tezos而言，升级将在一个实验性环境来进行，这让持币者
+可以对潜在的问题修改进行撤销。
 
-The philosophy of Tezos is inspired by Peter Suber's Nomic\cite{Nomic},
-a game built around a fully introspective set of rules.
+%% The philosophy of Tezos is inspired by Peter Suber's
+%% Nomic\cite{Nomic}, a game built around a fully introspective set of
+%% rules.
+这个Tezos的特性收到了Peter Suber’s Nomic\cite{Nomic}的启发。这是一个建
+立在具有内省性规则之上的游戏。
 
-In this paper, we hope to elucidate the potential benefits of Tezos,
-our choice to implement as a proof-of-stake system, and our choice to write it
-in OCaml.
+%% In this paper, we hope to elucidate the potential benefits of
+%% Tezos, our choice to implement as a proof-of-stake system, and our
+%% choice to write it in OCaml.
+在本论文里，我们希望能够展示Tezos的潜在优势，我们选择股权证明机制以及
+OCaml语言来实现这个程序的原因。
+
 
 \end{abstract}
 \newpage
 \tableofcontents
 
-\section{Motivation}
-In our development of Tezos, we aspire to address four problems we perceive with
-Bitcoin\cite{Bitcoin}:
+%% \section{Motivation}
+\section{动机}
+%% In our development of Tezos, we aspire to address four problems we
+%% perceive with Bitcoin\cite{Bitcoin}:
+我们开发Tezos的动机是希望通过Tezos来解决比特币\cite{Bitcoin}的四个问题：
+
 \begin{itemize}
-\item[-] The ``hard fork'' problem, or the inability for Bitcoin to dynamically
-innovate due to coordination issues.
-\item[-] Cost and centralization issues raised by Bitcoin's proof-of-work 
-system.
-\item[-] The limited expressiveness of Bitcoin's transaction language, which has
-pushed smart contracts onto other chains.
-\item[-] Security concerns regarding the implementation of a crypto-currency.
+%% \item[-] The ``hard fork'' problem, or the inability for Bitcoin to
+%% dynamically innovate due to coordination issues.
+\item[-] ``硬分叉''问题，也就是比特币因为协调而产生的不能够及时创新的
+  问题。
+%% \item[-] Cost and centralization issues raised by Bitcoin's
+%% proof-of-work system.
+\item[-] 成本和中心化问题，导致这个问题的主要原因是比特币的工作证明机制。
+%% \item[-] The limited expressiveness of Bitcoin's transaction
+%% language, which has pushed smart contracts onto other chains.
+\item[-] 比特币的有限表达问题，这让智能合约的机遇被竞争者抢得先机。
+%% \item[-] Security concerns regarding the implementation of a
+%% crypto-currency.
+\item[-] 加密货币实现过程中的安全问题。
 \end{itemize}
 
-\subsection{The Protocol Fork Problem}
+%% \subsection{The Protocol Fork Problem}
+\subsection{协议的分叉问题}
 
-\subsubsection{Keeping Up With Innovation}
-In the wake of Bitcoin's success, many developers and entrepreneurs have
-released alternative crypto-currencies (``altcoins''). While some of these
-altcoins did not diverge dramatically from Bitcoin's original
-code\footnote{wow, such unoriginal}, some presented interesting improvements.
-For example, Litecoin introduced a memory hard proof of work
-function\footnote{scrypt mining ASICs are now available} and a shorter block
-confirmation time. Similarly, Ethereum has designed
-stateful contracts and a Turing-complete transaction language\cite{Ethereum}.
-More important contributions include privacy-preserving ring signatures
-(CryptoNote)\cite{CryptoNote} and untraceable transactions using SNARK
-(Zerocash)\cite{Zerocash}.
+%% \subsubsection{Keeping Up With Innovation}
+\subsubsection{保证创新}
+%% In the wake of Bitcoin's success, many developers and entrepreneurs
+%% have released alternative crypto-currencies (``altcoins''). While
+%% some of these altcoins did not diverge dramatically from Bitcoin's
+%% original code\footnote{wow, such unoriginal}, some presented
+%% interesting improvements.  For example, Litecoin introduced a
+%% memory hard proof of work function\footnote{scrypt mining ASICs are
+%% now available} and a shorter block confirmation time. Similarly,
+%% Ethereum has designed stateful contracts and a Turing-complete
+%% transaction language\cite{Ethereum}.  More important contributions
+%% include privacy-preserving ring signatures
+%% (CryptoNote)\cite{CryptoNote} and untraceable transactions using
+%% SNARK (Zerocash)\cite{Zerocash}.
+为了让比特币保持创新，很多的开发者和企业家开发了很多的竞争加密货币（所
+  谓的山寨币）尽管很多加密货币只是对比特币的原始代码的简单模仿，但其中
+不乏一些有所针对地做了一些有意义的改善。例如，莱特币引进了高内存要求的
+工作证明机制，以及更短的区块确认时间。与之相类似的，以太坊被设计成一个
+状态合约和图灵完备的转账语言\cite{Ethereum}。其它的创新包括为保存隐私
+而被发明出来的环形签名(CryptoNote)\cite{CryptoNote}以及零币采用的转账
+不可被追踪的SNARK(ZeroCash)\cite{Zerocash}机制。
 
-The rise of altcoins has inspired a vast competition in software innovation.
-Cheerleaders for this Hayekian growth, however, miss a fundamental point: for a
-cryptocurrency to be an effective form of money, it needs to be a stable store
-of value. Innovation within a ledger preserves value through protecting
-the network effect giving the currency its value.
-
-To illustrate the problem of many competing altcoins, let us compare a
-crypto-currency and a smart phone. When purchasing a smart phone, the consumer
-is paying for certain features, such as the ability to play music, check email,
-message his friends, and conduct phone calls.
-
-Every few weeks, a newer smartphone model is released on the market which often
-contains enhanced features. Though consumers who have the older model may be
-jealous of those with the latest model, the introduction of newer smartphones
-does not render older smartphones dysfunctional.
-
-This dynamic would change, however, if the newest phones could not communicate
-with older models. If the many models and styles of smartphone could not be used
-together seamlessly, the value of each smartphone would be reduced to the number
-of people with the same model.
-
-Crypto-currencies suffer from the same fate as smartphones which are
-incompatible with one another; they derive their value from a network effect,
-or the number of users who have given it value. To this end, any innovation that
-occurs outside of a crypto-currency will either fail to build enough network
-effect to be noticed, or it will succeed but undermine the value of the savings
-in the old currency. If smartphones were incompatible with older models, there
-would be either very little innovation or extremely disruptive innovation
-forcing older phones into obsolescence.
-
-Side-chains are an attempt to allow innovations which will retain
-compatibility with Bitcoin by pegging the value of a new currency to Bitcoin and
- creating a two-way convertibility. Unfortunately, it's unclear whether they
-will be flexible enough to accommodate protocols substantially different fro
-Bitcoin. The only alternative so far is to fork the protocol.
-
-\subsubsection{Economics of Forks}
-
-To understand the economics of forks, one must first understand that monetary
-value is primarily a social consensus. It is tempting to equate a
-cryptocurrency with its rules and its ledger, but currencies are actually focal
-points: they draw their value from the common knowledge that they are accepted
-as money. While this may seem circular, there is nothing paradoxical about it.
-From a game theoretic perspective, the perception of a token as a store of value
-is stable so long as it is widespread. Note that, as a ledger, Bitcoin is
-a series of 1s and 0s. The choice to treat the amounts encoded within unspent
-outputs as balances is a purely \emph{social} consensus, not a property of the
-protocol itself.
-
-Changes in the protocol are referred to as ``forks''\footnote{not to be confused
-with blockchain forks which happen \emph{within} a protocol}. They are so called
-because, in principle, users have the option to keep using the old protocol.
-Thus, during a fork, the currency splits in two: an old version and a new
-version.
-
-A successful fork does not merely require software engineering, but
-the coordination of a critical mass of users. This coordination is hard
-to achieve in practice. Indeed, after a fork, two ledgers exist and users
-are confronted with a dilemma. How should they value each branch of the fork?
-
-This is a coordination game where the answer is to primarily value the branch
-other users are expected to primarily value. Of course, said users are likely
-to follow the same strategy and value the branch for the same reason. These
-games were analyzed by economist Thomas Schelling and focal points are
-sometimes referred to as ``Schelling points''\cite{schelling}.
-
-Unfortunately, there is no guarantee that this Schelling point will be the most
-desirable choice for the stakeholders, it will merely the ``default'' choice.
-A ``default'' could be to follow the lead of a core development team or the
-decrees of a government regardless of their merit.
-
-An attacker capable of changing social consensus
-controls the currency for all intents and purposes.
-The option to stick with the original protocol is widely irrelevant
-if the value of its tokens is annihilated by a consensus shift.%
-\footnote{The argument that there can never be more than 21 million bitcoin
-because ``if a fork raised the cap, then it wouldn't be Bitcoin anymore''
-isn't very substantive, for Bitcoin is what the consensus says it is.}
-
-Core development teams are a potentially a dangerous source of centralization.
-Though users can fork any open source project,
-that ability offers no protection against an attacker
-with enough clout to alter the social consensus.
-Even assuming the likely benevolence of a core development team,
-it represents a weak point on which an attacker could exercise leverage.
-
-Tezos guards against the vulnerabilities wrought by the source of centralization
-through radically decentralized protocol forks.
-It uses its own cryptoledger to let stakeholders coordinate on forks.
-This allows coordination and enshrines the principle that
-forks are not valid unless they are endogenous,
-making it much harder to attack the protocol by moving the consensus.
-
-Suppose for instance that a popular developer announces his intention to fork
-Tezos without making use of the protocol's internal procedure. ``Why would he
-attempt to bypass this process?'' might ask stakeholders. Most certainly,
-because he knew that he wouldn't be able to build consensus around his proposed
-fork \emph{within} Tezos.
-
-This signals to the stakeholders that their preferred consensus would be to
-reject this fork, and the Schelling point is thus to refuse it, no matter the
-clout of that developer.
+%% The rise of altcoins has inspired a vast competition in software
+%% innovation.  Cheerleaders for this Hayekian growth, however, miss a
+%% fundamental point: for a cryptocurrency to be an effective form of
+%% money, it needs to be a stable store of value. Innovation within a
+%% ledger preserves value through protecting the network effect giving
+%% the currency its value.
+这些山寨币的崛起鼓舞了后来者做出更多创新。很多哈耶克式增长的支持者们忽
+略了一个重要的问题，那就是对于一个加密货币，要想成为真正但货币，必须首
+先成为一个稳定的价值存储工具。这需要在数字账本内进行的技术创新保护系统
+的网络效应从而让其货币的价值更加稳固。
 
 
-\subsection{Shortcomings of Proof-of-Work}
+%% To illustrate the problem of many competing altcoins, let us
+%% compare a crypto-currency and a smart phone. When purchasing a
+%% smart phone, the consumer is paying for certain features, such as
+%% the ability to play music, check email, message his friends, and
+%% conduct phone calls.
+为了更好的展示这个问题，让我们来比较一个加密货币和智能手机。当我们购买
+一部只能手机的时候，消费者购买的某些特性，例如播放音乐，查阅邮件的能力，
+和朋友互发短信的能力，以及打电话的能力。
 
-The proof-of-work mechanism used by Bitcoin is a careful balance
-of incentives meant to prevent the double spending problem. 
-While it has nice theoretical properties in the absence of miner
-collusion, it suffers in practice from severe shortcomings.
+%% Every few weeks, a newer smartphone model is released on the market
+%% which often contains enhanced features. Though consumers who have
+%% the older model may be jealous of those with the latest model, the
+%% introduction of newer smartphones does not render older smartphones
+%% dysfunctional.
+几周以后又一款新的智能手机上市了，往往带有新的功能。尽管老手机型号的消
+费者或者会希望得到这些新的型号，新型号的手机并不会让老手机变得失效。
 
-\subsubsection{Mining Power Concentration}
-There are several problems with proof-of-work as a foundation for
-crypto-currencies. The most salient problem, which is all too relevant
-as of 2014, is the existence of centralized mining pools, which concentrate
-power in the hands of a few individuals.
+%% This dynamic would change, however, if the newest phones could not
+%% communicate with older models. If the many models and styles of
+%% smartphone could not be used together seamlessly, the value of each
+%% smartphone would be reduced to the number of people with the same
+%% model.
+如果新的手机变得不能够和老型号手机互通，那么这种关系就会改变，那款新手
+机的价值就仅限于使用该型号手机的人群。
 
-The proof-of-work mechanism is decentralized, which means that users do not
-need to \emph{explicitely} trust anyone to secure the currency. However,
-\emph{implicitely}, Bitcoin has yielded a system where all users have to trust
-the benevolence of one or two pool operators to secure the currency.
+%% Crypto-currencies suffer from the same fate as smartphones which
+%% are incompatible with one another; they derive their value from a
+%% network effect, or the number of users who have given it value. To
+%% this end, any innovation that occurs outside of a crypto-currency
+%% will either fail to build enough network effect to be noticed, or
+%% it will succeed but undermine the value of the savings in the old
+%% currency. If smartphones were incompatible with older models, there
+%% would be either very little innovation or extremely disruptive
+%% innovation forcing older phones into obsolescence.
+加密货币面临的问题就像不能兼容其它型号的智能手机。它们的价值在于其网络
+价值，或者说用户数量，这是给它们价值的最重要因素。为了实现这个目的，在
+一个新的创新货币，要么因为不能够建立足够的网络效应而失败，要么获得成功，
+但却损害其它加密货币的价值。如果一款智能手机不能和旧款兼容，那么用户会
+有如下几种反应：
 
-A conspiracy of miners holding more than 50\% of the hashing power
-is known as 51\% attack\cite{51pct}. It allows the attackers
-to prevent transactions from being made, to undo transactions,
-to steal recently minted coins and to to double spend\cite{centralized}.
+\begin{enumerate}
+\item 哇，一点原创都没有。
+\item Scrypt矿机(莱特币矿机)被研制出来了
+\item 或者没有创新或者极度创新，以至于让老型号变得过时。
+\end{enumerate}
 
-A centralized mint signing blocks would be just as secure,
-and far less wasteful, as a miner controlling 51\% of the hashing power.
-If a centralized mint is unacceptable to Bitcoin users,
-they should not tolerate \textit{de facto} centralization of mining power.
+%% Side-chains are an attempt to allow innovations which will retain
+%% compatibility with Bitcoin by pegging the value of a new currency
+%% to Bitcoin and creating a two-way convertibility. Unfortunately,
+%% it's unclear whether they will be flexible enough to accommodate
+%% protocols substantially different fro Bitcoin. The only alternative
+%% so far is to fork the protocol.
+侧链是一个让新货币的价值和比特币进行锚定实现两者之间的互换的尝试。不幸
+的是，这样的关系不确定能有足够的灵活性来满足那些和比特币非常不同的货币。
+唯一的替代方案就是对协议进行分叉。
 
-The concentration of mining power is no coincidence:
-large mining pools face less variance in their returns than their competitors
-and can thus afford to grow their operation more.
-In turn, this growth increases their market share and lowers their variance.
+%% \subsubsection{Economics of Forks}
+\subsubsection{分叉经济学}
 
-To make things worse, the large mining pool ghash.io
-has hinted at a business model where they would prioritize ``premium''
-transactions submitted directly to them. This means that large miners would earn
-proportionally more than smaller miners. Sadly, p2pool has had trouble
-attracting hashing power as most miners selfishly prefer the convenience of
-centralized mining-pools.
+%% To understand the economics of forks, one must first understand
+%% that monetary value is primarily a social consensus. It is tempting
+%% to equate a cryptocurrency with its rules and its ledger, but
+%% currencies are actually focal points: they draw their value from
+%% the common knowledge that they are accepted as money. While this
+%% may seem circular, there is nothing paradoxical about it.  From a
+%% game theoretic perspective, the perception of a token as a store of
+%% value is stable so long as it is widespread. Note that, as a
+%% ledger, Bitcoin is a series of 1s and 0s. The choice to treat the
+%% amounts encoded within unspent outputs as balances is a purely
+%% \emph{social} consensus, not a property of the protocol itself.
+要理解分叉经济学，一定要首先理解货币的价值首先是一个社会共识。很容易认
+为加密货币是它的规则和账本，其实它们的价值源自它们被广泛接受为货币。尽
+管这样的观点看上去似乎是循环辩论，但却没有任何的矛盾。从一个博弈论的观
+点来看，一个币只要被广泛接受就可以成为稳定的储值工具。作为一个账本，比
+特币只是一系列的1和0。如何对待这些数量的选择是一个完全基于社会的共识，
+而不是协议本身。
 
-Many have argued that fears of market concentration are
-overblown. They are generalizing hastily from the real world economy.
-Real businesses compete in a rapidly changing landscape
-where Schumpeterian creative destruction exercises
-constant evolutionary pressure on incumbents.
-Real businesses need local knowledge, face organizational issues
-and principal agent problems. Bitcoin mining is a purely synthetic economic
-sector centered around hashing power, a purely fungible commodity.
-It would be mistaken to hastily generalize and think that such a sterile
-environment is endowed with the same organic robustness that characterizes a
-complex, fertile, economy.\footnote{It is possible that a new technology
-will supplant ASICs who themselves replaced FPGA boards. However, the pace of
-this type of innovation is nowhere fast enough to prevent miners from forming
-dominating positions for long period of times; and such innovation would benefit
-but a new (or the same) small clique of people who initially possess the new
-technology or eventually amass the capital to repeat the same pattern.}
+%% Changes in the protocol are referred to as ``forks''\footnote{not
+%%   to be confused with blockchain forks which happen \emph{within} a
+%%   protocol}. They are so called because, in principle, users have
+%%   the option to keep using the old protocol.  Thus, during a fork,
+%%   the currency splits in two: an old version and a new version.
+对协议的改变被称为\emph{分叉}。它们之所以被称为是分叉是因为原则上，用
+户有权来保存旧的协议。所以，当分叉发生的时候，货币被一分为二，成为一个
+老的版本和一个新的版本。
 
-Furthermore, the economic argument generally holds that natural monopolies have
-few incentives to abuse their position. The same could be said about a Bitcoin
-miner --- after all, why would a dominant miner destroy the value of their
-investments by compromising the currency?
-Unfortunately, this still creates a huge systemic risk as such miners can be
-compromised by a dishonest attacker. The cost of executing a double spending
-attack against the network is \emph{no more} than the cost of subverting a few
-large mining pool.
+%% A successful fork does not merely require software engineering, but
+%% the coordination of a critical mass of users. This coordination is
+%% hard to achieve in practice. Indeed, after a fork, two ledgers
+%% exist and users are confronted with a dilemma. How should they
+%% value each branch of the fork?
+一个成功的分叉并不仅仅对软件工程学有要求，也要求一定数量用户的配合。这
+样的配合在实践上特别难以实现。事实上分叉之后持币者同时拥有两个账户，并
+将面对二选一的问题，也就是如何衡量不同分支的价值。
 
-There have been proposals intended to address this issue by tweaking the
-protocol so it would be impossible for pool organizers to trust their members
-not to cheat. However, these proposals only prevent pools from gathering mining
-force from anonymous participants with whom there is no possibility of
-retaliation. Pooling is still possible between non-anonymous people:
-organizers may operate all the mining hardware while participants hold shares,
-or organizers may track cheaters by requiring inclusion of an identifying nonce
-in the blocks they are supposed to hash. The result of such proposals would thus
-be to increase variance for anonymous mining operations and to push towards
-further concentration in the hands of mining cartels.
+%% This is a coordination game where the answer is to primarily value
+%% the branch other users are expected to primarily value. Of course,
+%% said users are likely to follow the same strategy and value the
+%% branch for the same reason. These games were analyzed by economist
+%% Thomas Schelling and focal points are sometimes referred to as
+%% ``Schelling points''\cite{schelling}.
+这是一个所谓但配合游戏，用户往往选择他们所认为其他用户被期待选择的分支。
+所以，这些用户很可能也会使用同样的策略来基于同样的原因来做出选择。经济
+学家Thomas Schelling对这些博弈进行过仔细的研究，并提出了一些原创的观点
+\cite{schelling}。
 
-Proof-of-stake, as used by Tezos, does not suffer from this problem:
-inasmuch as it is possible to hold 51\% of the mining power,
-this implies holding 51\% of the currency,
-which is not only much more onerous than controlling 51\% of hashing power but
-implies fundamentally better \emph{incentives}.
+%% Unfortunately, there is no guarantee that this Schelling point will
+%% be the most desirable choice for the stakeholders, it will merely
+%% the ``default'' choice.  A ``default'' could be to follow the lead
+%% of a core development team or the decrees of a government
+%% regardless of their merit.
+不幸的Schelling最优并不总是被绝大所数的持币者所选择。它只是一个默认选
+择。这个默认选择可以是跟随核心开发团队的意见，它也可以是跟随政府的指令，
+无论正确与否。
 
-\subsubsection{Bad incentives}
-There is an even deeper problem with proof-of-work, one that is much harder to
-mitigate than the concentration of mining power: a misalignment of incentives
-between miners and stakeholders.
 
-Indeed, in the long run, the total mining revenues will be the sum of the all
-transaction fees paid to the miners. Since miners compete to produce hashes,
-the amount of money spent on mining will be slightly smaller than the revenues.
-In turn, the amount spent on transactions depends on the supply and demand for
-transactions. The supply of transactions on the blockchain is determined by the
-block size and is fixed.
+%% An attacker capable of changing social consensus controls the
+%% currency for all intents and purposes.  The option to stick with
+%% the original protocol is widely irrelevant if the value of its
+%% tokens is annihilated by a consensus shift.% \footnote{The argument
+%% that there can never be more than 21 million bitcoin because ``if a
+%% fork raised the cap, then it wouldn't be Bitcoin anymore'' isn't
+%% very substantive, for Bitcoin is what the consensus says it is.}
+一个攻击者可以通过改变社会共识来操控货币来达成各种意图和目的。如果一旦
+币价随着共识的转移而崩溃，那么和最初的共识协议保持一致的选择将变得毫无
+意义。\footnote{一个论点是永远不会有超过两千一百万个比特币，因为如果一
+  个fork提高这个上限，那么它就不再是比特币了。这种观点是没有道理的，比
+  特币是共识所认为是的东西。}
 
-Unfortunately, there is reason to expect that the demand for transactions will
-fall to very low levels. People are likely to make use of off-chain transaction
-mechanisms via trusted third parties, particularly for small amounts, in order
-to alleviate the need to wait for confirmations. Payment processors may only
-need to clear with each other infrequently.
+%% Core development teams are a potentially a dangerous source of
+%% centralization.  Though users can fork any open source project,
+%% that ability offers no protection against an attacker with enough
+%% clout to alter the social consensus.  Even assuming the likely
+%% benevolence of a core development team, it represents a weak point
+%% on which an attacker could exercise leverage.
+核心开发团队是潜在的非常危险的中心化威胁。尽管用户可以对一个开源项目进
+行分叉，但是这个能力在那些给有足够能力的强大到足够改变社会共识的攻击者
+面前所能提供的保护是微不足道的。这和区块链分叉在协议内的不同。即使我们
+所选择无条件的信任的开发团队总是善意的，这仍然是一个系统的短板，可以被
+攻击者所利用。
 
-This scenario is not only economically likely, it seems necessary given the
-relatively low transaction rate supported by Bitcoin. Since blockchain
-transaction will have to compete with off-chain transaction, the amount spent on
-transactions will approach its cost, which, given modern infrastructure, should
-be close to zero.
 
-Attempting to impose minimum transaction fees may only exacerbate the problem
-and cause users to rely on off-chain transaction more. As the amount paid in
-transaction fees collapses, so will the miner's revenues, and so will the cost
-of executing a 51\% attack. To put it in a nutshell, the security of a
-proof-of-work blockchain suffers from a commons problem\cite{btccommons}.
-Core developer Mike Hearn has suggested the use of special transactions to
-subsidize mining using a pledge type of fund raising\cite{dominantassurance}.
-A robust currency should not need to rely on charity to operate securely.
+%% Tezos guards against the vulnerabilities wrought by the source of
+%% centralization through radically decentralized protocol forks.  It
+%% uses its own cryptoledger to let stakeholders coordinate on forks.
+%% This allows coordination and enshrines the principle that forks are
+%% not valid unless they are endogenous, making it much harder to
+%% attack the protocol by moving the consensus.
+Tezos通过极度的去中心化分叉来解决中心化所带来的系统弱点。这个使用自己
+的加密账本来让持币者在分叉问题上进行相互合作。这让协调成为可能，并且让
+原则变得神圣不可侵犯 - 那就是如果不是内部发生的分叉，那么这个分叉将不
+被承认。
 
-Proof-of-stake fixes these bad incentives by aligning the incentives of the
-miners and stakeholders: by very definition, the miners \emph{are} the
-stakeholders, and are thus interested in keeping the transaction costs low.
-At the same time, because proof-of-stake mining is not based on destruction of
-resources, the transaction cost (whether direct fees or indirect inflation)
-are entirely captured by miners, who can cover their operating costs
-without having to compete through wealth destruction.
 
-\subsubsection{Cost}
-An alternative is to keep permanent mining rewards, as Dogecoin\cite{doge} has
-considered. Unfortunately, proof-of-work arbitrarily increases the costs to the
-users without increasing the profits of the miners, incurring a deadweight loss.
-Indeed, since miners compete to produce hashes, the amount of money they spend
-on mining will be slightly smaller than the revenues, and in the long run,
-the profits they make will be commensurate with the value of their transaction
-services, while the cost of mining is lost to everyone.
+%% Suppose for instance that a popular developer announces his intention to fork
+%% Tezos without making use of the protocol's internal procedure. ``Why would he
+%% attempt to bypass this process?'' might ask stakeholders. Most certainly,
+%% because he knew that he wouldn't be able to build consensus around his proposed
+%% fork \emph{within} Tezos.
+假设一个很受欢迎的开发者宣布他有计划在不通过协议的内部章程的前提下分叉
+Tezos，其他用户会问``为什么他会试图绕过这个过程？''持币者群体会发问。
+更加重要的是因为开发者知道自己不能通过这种方式在Tezos内建立一个新的共
+识所以也不会这样做。
 
-This is not simply a nominal effect: real economic goods (time in fabs,
-electricity, engineering efforts) are being removed from the economy for the
-sake of proof-of-work mining. As of June 2014, Bitcoin's annual inflation stands
-at a little over 10\% and about \$2.16M dollars are being burned daily for the
-sake of maintaining a system that provides little to no security over a
-centralized system in the hands of ghash.io.
+%% This signals to the stakeholders that their preferred consensus
+%% would be to reject this fork, and the Schelling point is thus to
+%% refuse it, no matter the clout of that developer.
+这也给投资者释放了信号,他们所偏好的共识将是拒绝这个分支，按照Schelling
+点原理，这个分支会被拒绝，不管这个开发者多么有影响力。
 
-The very security of a proof-of-work scheme rests on this actual cost being
-higher than what an attacker is willing to pay, which is bound to increase
-with the success of the currency.
+%% \subsection{Shortcomings of Proof-of-Work}
+\subsection{劳动证明机制的缺陷}
 
-Proof-of-stake eliminates this source of waste without lowering the cost of
-attacks --- indeed, it automatically scales up the cost of an attack as the
-currency appreciates. Because the thing you must prove to mine is not
-destruction of existing resources but provision of existing resources,
-a proof-of-stake currency does not rely on destroying massive resources
-as it gains in popularity.
+%% The proof-of-work mechanism used by Bitcoin is a careful balance of
+%% incentives meant to prevent the double spending problem.  While it
+%% has nice theoretical properties in the absence of miner collusion,
+%% it suffers in practice from severe shortcomings.
+劳动证明机制的问题。比特币所运用的劳动证明机制(PoW)是一个巧妙的利益平
+衡机制，其目的是解决了双花问题。虽然在排除矿工联合劫持网络以外的场景有
+很好的理论特性，在实践中这个机制有很多问题。
 
-\subsubsection{Control}
-Last but not least, the proof-of-work system puts the miners,
-not the stakeholders, in charge. Forks for instance require the consent of a
-majority of the miners. This poses a potential conflict of interest: a majority
-of miners could decide to hold the blockchain hostage until stakeholders consent
-to a protocol fork increasing the mining rewards; more generally, they will hold
-onto the hugely wasteful system that empowers them longer than is economically
-beneficial for users.
+%% \subsubsection{Mining Power Concentration}
+\subsubsection{挖矿算力集中化}
+%% There are several problems with proof-of-work as a foundation for
+%% crypto-currencies. The most salient problem, which is all too relevant
+%% as of 2014, is the existence of centralized mining pools, which
+%% concentrate power in the hands of a few individuals.
+以PoW作为加密货币的基础有几个问题。其中的一个，在2014年特别突出的问题
+是矿池的中心化。这把算力集中在少数的几个人手里。
 
-\subsection{Smart Contracts}
-Though Bitcoin does allow for smart contracts, most of its opcodes
-have been historically disabled and the possibilities are limited.
-Ethereum introduced a smart contract system with some critical differences:
-their scripting language is Turing complete and they substitute
-stateful accounts to Bitcoin's unspent outputs.
+%% The proof-of-work mechanism is decentralized, which means that
+%% users do not need to \emph{explicitely} trust anyone to secure the
+%% currency. However, \emph{implicitely}, Bitcoin has yielded a system
+%% where all users have to trust the benevolence of one or two pool
+%% operators to secure the currency.
+劳动证明机制是去中心化的原因是用户不用去信任来维护货币系统安全的系统。
+但是，私底下，比特币系统内，所有的用户必须相信一个或者两个矿池是善意的。
 
-While emphasis has been put on the Turing complete aspect of the language,
-the second property is by far the most interesting and powerful of the two.
-In Bitcoin, an output can be thought of as having only two states: spent and
-unspent. In Ethereum, accounts (protected by a key) hold a balance, a contract
-code and a data store. The state of an account's storage can be mutated
-by making a transaction towards this account. The transaction specifies an
-amount and the parameters passed to the contract code.
+%% A conspiracy of miners holding more than 50\% of the hashing power
+%% is known as 51\% attack\cite{51pct}. It allows the attackers to
+%% prevent transactions from being made, to undo transactions, to
+%% steal recently minted coins and to to double
+%% spend\cite{centralized}.
+一个矿工拥有超过50\%算力的结果是可以对系统发动51\%攻击\cite{51pct}。这
+让攻击者可以让转账停顿，让已经发生的转账逆转，偷走最近挖出的币，以及进
+行双花\cite{centralized}。
 
-A downside of a Turing complete scripting language for the contracts
-is that the number of steps needed to execute a script is potentially unbounded,
-a property which is generally uncomputable.
+%% A centralized mint signing blocks would be just as secure, and far
+%% less wasteful, as a miner controlling 51\% of the hashing power.
+%% If a centralized mint is unacceptable to Bitcoin users, they should
+%% not tolerate \textit{de facto} centralization of mining power.
+一个中心化的印钞机构完全可以和一个有矿工控制着51\%的算力的网络那样安全，
+而且更加节省资源。如果一个中心化的印钞机构不能够被比特币用户所接受，同
+理，他们也不应该接受矿工的中心化。
 
+
+%% The concentration of mining power is no coincidence: large mining
+%% pools face less variance in their returns than their competitors and
+%% can thus afford to grow their operation more.  In turn, this growth
+%% increases their market share and lowers their variance.
+这个中心化不是一个巧合。大的矿池获得稳定的收益，因此可以获得大量用户。
+而这个增长进一步提升他们的市场份额，让他们的收益波动变得更低。
+
+%% To make things worse, the large mining pool ghash.io has hinted at
+%% a business model where they would prioritize ``premium''
+%% transactions submitted directly to them. This means that large
+%% miners would earn proportionally more than smaller miners. Sadly,
+%% p2pool has had trouble attracting hashing power as most miners
+%% selfishly prefer the convenience of centralized mining-pools.
+让事情变得更加糟糕的是，ghash.io,一个大矿池声称自己的一个商业模式是为
+那些交高手续费的转账者提供优先服务，更加剧了大矿工赚更多的钱的趋势。不
+幸的是，p2pool没有能够吸引大量的算力，因为大多数的矿工自私地因为方便而
+选择了中心化的矿池。
+
+%% Many have argued that fears of market concentration are
+%% overblown. They are generalizing hastily from the real world economy.
+%% Real businesses compete in a rapidly changing landscape where
+%% Schumpeterian creative destruction exercises constant evolutionary
+%% pressure on incumbents.  Real businesses need local knowledge, face
+%% organizational issues and principal agent problems. Bitcoin mining is
+%% a purely synthetic economic sector centered around hashing power, a
+%% purely fungible commodity.  It would be mistaken to hastily generalize
+%% and think that such a sterile environment is endowed with the same
+%% organic robustness that characterizes a complex, fertile,
+%% economy.\footnote{It is possible that a new technology will supplant
+%%   ASICs who themselves replaced FPGA boards. However, the pace of this
+%%   type of innovation is nowhere fast enough to prevent miners from
+%%   forming dominating positions for long period of times; and such
+%%   innovation would benefit but a new (or the same) small clique of
+%%   people who initially possess the new technology or eventually amass
+%%   the capital to repeat the same pattern.}
+很多人认为市场的中心化是被过度夸张了。这样的论点犯了现实经济的过度概括
+的问题。真正的商业在一个极具变化的环境中进行竞争，而创新的破坏让现有的
+领导者感到压力。真正的商业需要本地知识，他们会面对组织问题，以及主要代
+理（principal agent）问题。比特币挖矿是一个纯粹的人工合成的经济类型，
+其中心是算力，而算力是一个完全可互换的商品。把基于传统商业类比比特币是
+错误的，因为这个单一的环境完全没有传统经济那么复杂，丰富。\footnote{很
+  可能会有新技术将会取代ASICs, 正如它们已经取代了FPGA电路板一样。然而，
+  这种创新的速度没有快到足够可以让矿工在长时间内形成一个主导地位。 这
+  样的创新会让一小帮的新人通过掌握新技术收益，或者那些掌握足够资金的人
+  来重复这个过程的人。}
+
+
+%% Furthermore, the economic argument generally holds that natural
+%% monopolies have few incentives to abuse their position. The same
+%% could be said about a Bitcoin miner --- after all, why would a
+%% dominant miner destroy the value of their investments by
+%% compromising the currency?  Unfortunately, this still creates a
+%% huge systemic risk as such miners can be compromised by a dishonest
+%% attacker. The cost of executing a double spending attack against
+%% the network is \emph{no more} than the cost of subverting a few
+%% large mining pool.
+很多经济学观点认为自然垄断者没有动机来滥用自己的垄断地位。这个观点也可
+以被运用在比特币挖矿行业 - 毕竟，哪一个占据主导地位的矿工会冒着让自己
+投资减损的风险来让破坏这个货币？然而不幸的是，这仍然产生了一个巨大的系
+统风险，因为拥有大算力的矿工可以被不诚实的攻击者所利用。一个破坏网络的
+双花攻击的代价\emph{不会}高过让几个大矿池变节的费用。
+
+%% There have been proposals intended to address this issue by
+%% tweaking the protocol so it would be impossible for pool organizers
+%% to trust their members not to cheat. However, these proposals only
+%% prevent pools from gathering mining force from anonymous
+%% participants with whom there is no possibility of
+%% retaliation. Pooling is still possible between non-anonymous
+%% people: organizers may operate all the mining hardware while
+%% participants hold shares, or organizers may track cheaters by
+%% requiring inclusion of an identifying nonce in the blocks they are
+%% supposed to hash. The result of such proposals would thus be to
+%% increase variance for anonymous mining operations and to push
+%% towards further concentration in the hands of mining cartels.
+曾经有人提议对协议进行修改，让矿池的组织者无法想当然地默认用户会诚实，
+然而这些提议仅仅让矿池不能够从匿名参与者那里集中算力，而参与者仍然没有
+有效报复手段。矿池也可以采用非匿名的方式进行组织。矿池主运行算力，而参
+与者仅仅持有股份，或者组织者可以追踪那些不诚实的成员，要求他们加入一个
+可以被辨识的nonce在他们要进行哈希的区块中。这样的结果是提高匿名的挖矿
+者的变化度，而让算力更加集中在少数几个挖矿集团手里。
+
+%% Proof-of-stake, as used by Tezos, does not suffer from this
+%% problem: inasmuch as it is possible to hold 51\% of the mining
+%% power, this implies holding 51\% of the currency, which is not only
+%% much more onerous than controlling 51\% of hashing power but
+%% implies fundamentally better \emph{incentives}.
+而以Tezos为代表的PoS机制，则可以免收这类问题的困扰。如果有人持有多数算
+力，那么它必然持有多数的货币，这样的结果是如果要发动51攻击所要承担的代
+价也更加的大，而且也意味着更好的激励体制。
+
+%% \subsubsection{Bad incentives}
+\subsubsection{坏的动机}
+%% There is an even deeper problem with proof-of-work, one that is
+%% much harder to mitigate than the concentration of mining power: a
+%% misalignment of incentives between miners and stakeholders.
+PoW面临一个更加深刻的问题是很难让矿工和股东之间达成利益一致。
+
+%% Indeed, in the long run, the total mining revenues will be the sum
+%% of the all transaction fees paid to the miners. Since miners
+%% compete to produce hashes, the amount of money spent on mining will
+%% be slightly smaller than the revenues.  In turn, the amount spent
+%% on transactions depends on the supply and demand for
+%% transactions. The supply of transactions on the blockchain is
+%% determined by the block size and is fixed.
+长期来看，挖矿的总利润应该是被支付给矿工的所有的交易手续费。因为矿工们
+彼此竞争来产生哈希，花在挖矿上的钱最终将比利润略小，而花在转账上的费用
+依赖于对转账的供给和需求。这个在链的供给被区块的大小所限制，而区块大小
+已经被锁死。
+
+%% Unfortunately, there is reason to expect that the demand for
+%% transactions will fall to very low levels. People are likely to
+%% make use of off-chain transaction mechanisms via trusted third
+%% parties, particularly for small amounts, in order to alleviate the
+%% need to wait for confirmations. Payment processors may only need to
+%% clear with each other infrequently.
+不幸的是，我们有理由预期交易的需求会降到非常低的水平。People are
+likely to make use of off-chain transaction mechanisms via trusted
+third parties, particularly for small amounts, in order to alleviate
+the need to wait for confirmations. Payment processors may only need
+to clear with each other infrequently.
+
+%% This scenario is not only economically likely, it seems necessary
+%% given the relatively low transaction rate supported by
+%% Bitcoin. Since blockchain transaction will have to compete with
+%% off-chain transaction, the amount spent on transactions will
+%% approach its cost, which, given modern infrastructure, should be
+%% close to zero.
+这种情况不仅仅是经济上的最好选择，也是基于比特币支持的低转账速度下不得
+已的解决办法。尽管区块链转账必须要通过链下转账，花在转账上的费用最终将
+逼近它的成本价，而现代的基础设施的飞速发展意味着这个值最终将趋近0。
+
+%% Attempting to impose minimum transaction fees may only exacerbate
+%% the problem and cause users to rely on off-chain transaction
+%% more. As the amount paid in transaction fees collapses, so will the
+%% miner's revenues, and so will the cost of executing a 51\%
+%% attack. To put it in a nutshell, the security of a proof-of-work
+%% blockchain suffers from a commons problem\cite{btccommons}.  Core
+%% developer Mike Hearn has suggested the use of special transactions
+%% to subsidize mining using a pledge type of fund
+%% raising\cite{dominantassurance}.  A robust currency should not need
+%% to rely on charity to operate securely.
+试图强加一个最低的转账费用最终将导致问题恶化，并让用户更加依赖于链下的
+转账。随着支付转账费的数量下降，矿工的收益也随着下降，而发动51攻击的成
+本也会下降。简单来说，区块链劳动证明PoW的安全面临一个公地问题
+\cite{btccommons}。核心开发Mike Hearn已经指出使用特别的转账来给挖矿提
+供资助，使用一种pledge的融资方式\cite{dominantassurance}。一个健壮的货
+币应该不需要依赖善意才能够稳定运作。
+
+%% Proof-of-stake fixes these bad incentives by aligning the
+%% incentives of the miners and stakeholders: by very definition, the
+%% miners \emph{are} the stakeholders, and are thus interested in
+%% keeping the transaction costs low.  At the same time, because
+%% proof-of-stake mining is not based on destruction of resources, the
+%% transaction cost (whether direct fees or indirect inflation) are
+%% entirely captured by miners, who can cover their operating costs
+%% without having to compete through wealth destruction.
+股权证明机制(PoS)解决了这些问题，通过重新配置矿工和用户之间的关系：按
+照其定义，矿工也同时是持币人，因此也希望转账的费用比较低。于此同时，因
+为PoS挖矿并不是基于对资源的消耗之上，所有的交易的成本（不管是直接的费
+  用还是间接的通货膨胀）都被矿工所承担，而他们可以覆盖自己的运营成本，
+而不需要进行毁坏财富的竞争。
+
+%% \subsubsection{Cost}
+\subsubsection{成本}
+%% An alternative is to keep permanent mining rewards, as
+%% Dogecoin\cite{doge} has considered. Unfortunately, proof-of-work
+%% arbitrarily increases the costs to the users without increasing the
+%% profits of the miners, incurring a deadweight loss.  Indeed, since
+%% miners compete to produce hashes, the amount of money they spend on
+%% mining will be slightly smaller than the revenues, and in the long
+%% run, the profits they make will be commensurate with the value of
+%% their transaction services, while the cost of mining is lost to
+%% everyone.
+一个替代方案是像狗狗币\cite{doge}一样让挖矿收益变为永久性。然而随之而
+来的问题是用户使用成本的增加，矿工收益没有增加，造成对整个系统的净损失。
+确实，随着矿工彼此竞争来生产哈希，他们投资的钱将比最终的收益少一点，长
+期来看，他们的收益将等同于他们转账手续费。挖矿的成本将被每个人所承担。
+
+%% This is not simply a nominal effect: real economic goods (time in
+%% fabs, electricity, engineering efforts) are being removed from the
+%% economy for the sake of proof-of-work mining. As of June 2014,
+%% Bitcoin's annual inflation stands at a little over 10\% and about
+%% \$2.16M dollars are being burned daily for the sake of maintaining
+%% a system that provides little to no security over a centralized
+%% system in the hands of ghash.io.
+更严重的是，真正的经济商品（fabs时间，电，工程投入）都因为PoS挖矿机制
+而不能参与实体经济。在2014年六月，比特币的全年的贬值率大约为10\%，平均
+每天因为维护这个系统要消耗2.16百万美元，这并不能让一个算力集中在
+ghash.io手里的系统更加安全。
+
+%% The very security of a proof-of-work scheme rests on this actual
+%% cost being higher than what an attacker is willing to pay, which is
+%% bound to increase with the success of the currency.
+PoW的支持者坚持其安全保障在于攻击代价比一个攻击者所愿意花费的金额要高，
+这个代价随着货币的价值的提升而不断升高。PoS减少了浪费的资源，但没有降
+低攻击的代价。它在货币升值的同时自动地让攻击的代价升高了。
+
+%% Proof-of-stake eliminates this source of waste without lowering the
+%% cost of attacks --- indeed, it automatically scales up the cost of
+%% an attack as the currency appreciates. Because the thing you must
+%% prove to mine is not destruction of existing resources but
+%% provision of existing resources, a proof-of-stake currency does not
+%% rely on destroying massive resources as it gains in popularity.
+因为你要证明你挖矿的时候不是摧毁现有的资源而是证明提供现有资源，一个
+PoS货币并不会因为变得更受欢迎而消耗更多资源。Because the thing you
+must prove to mine is not destruction of existing resources but
+provision of existing resources, a proof-of-stake currency does not
+rely on destroying massive resources as it gains in popularity.
+
+%% \subsubsection{Control}
+\subsubsection{控制}
+%% Last but not least, the proof-of-work system puts the miners, not
+%% the stakeholders, in charge. Forks for instance require the consent
+%% of a majority of the miners. This poses a potential conflict of
+%% interest: a majority of miners could decide to hold the blockchain
+%% hostage until stakeholders consent to a protocol fork increasing
+%% the mining rewards; more generally, they will hold onto the hugely
+%% wasteful system that empowers them longer than is economically
+%% beneficial for users.
+一个PoW系统让矿工而不是持币人成为系统的主人。分叉要求大多数矿工支持。
+这导致了潜在的利益冲突。大多数的矿工可以决定是否劫持区块链来通过协议分
+叉来增加挖矿回报。更严重的是，他们将会让这个非常低效浪费的系统来让他们
+长期存在，这并不符合用户的利益。
+
+%% \subsection{Smart Contracts}
+\subsection{智能合约}
+%% Though Bitcoin does allow for smart contracts, most of its opcodes
+%% have been historically disabled and the possibilities are limited.
+%% Ethereum introduced a smart contract system with some critical
+%% differences: their scripting language is Turing complete and they
+%% substitute stateful accounts to Bitcoin's unspent outputs.
+尽管比特币允许智能合约，但大多数的opcodes历史上被关闭，其潜在功能也被
+大大地限制。以太坊提出了有很大不同的智能合约概念。 它们的scripting语言
+是图灵完备的而且用stateful账户替代了比特币的unspent outputs。
+
+%% While emphasis has been put on the Turing complete aspect of the
+%% language, the second property is by far the most interesting and
+%% powerful of the two.  In Bitcoin, an output can be thought of as
+%% having only two states: spent and unspent. In Ethereum, accounts
+%% (protected by a key) hold a balance, a contract code and a data
+%% store. The state of an account's storage can be mutated by making a
+%% transaction towards this account. The transaction specifies an
+%% amount and the parameters passed to the contract code.
+尽管重点是在语言的图灵完备性能，第二个特性是到目前为止最有意思的和强大
+的。在比特币系统里，一个output可以被认为是只有两种状态：花掉和没有被花
+掉在以太坊，账户（被钥匙所保护）有一个余额，一个合同代码，和一个数据存
+储。这个账户的存储状态可以被改变为让一个交易导向这个账户。这个交易详细
+规定了被导向合同代码的一个数量和参数。
+
+%% A downside of a Turing complete scripting language for the
+%% contracts is that the number of steps needed to execute a script is
+%% potentially unbounded, a property which is generally uncomputable.
+图灵完备的一个会坏处，那就是潜在需要的步骤是无限制的。
+
+%% To address this problem, Ethereum has devised a system by which the miner
+%% validating the transaction requires a fee proportional to the complexity
+%% and number of steps needed to execute the contract.
 To address this problem, Ethereum has devised a system by which the miner
 validating the transaction requires a fee proportional to the complexity
 and number of steps needed to execute the contract.
 
-Yet, for  the blockchain to be secure, \emph{all} the active nodes need to
-validate the transaction. A malicious miner could include in his block a
-transaction that he crafted specially to run into an infinite loop and pay
-himself an exorbitant fee for validating this transaction. Other miners could
-waste a very long time validating this transaction. Worse, they could just
-slack and fail to validate it. In practice though, most of the interesting
-smart contracts can be implemented with very simple business logic and do not
-need to perform complex calculations.
+%% Yet, for the blockchain to be secure, \emph{all} the active nodes
+%% need to validate the transaction. A malicious miner could include
+%% in his block a transaction that he crafted specially to run into an
+%% infinite loop and pay himself an exorbitant fee for validating this
+%% transaction. Other miners could waste a very long time validating
+%% this transaction. Worse, they could just slack and fail to validate
+%% it. In practice though, most of the interesting smart contracts can
+%% be implemented with very simple business logic and do not need to
+%% perform complex calculations.
+但是，为了让一个区块链变得安全，所有的活跃的节点都必须要能够确认转账。
+一个恶意的矿工可以在他的区块里包含一个交易，让这个成为一个死循环，并且
+给自己支付特别高昂的费用来确认这笔交易。其它的矿工可以浪费很长时间来确
+认这笔交易。更差劲的是，他们可以拖延，并且不确认。实际上，大多数的有趣
+的智能合约可以被实现，按照很简单的商业逻辑，并且不需要进行特别复杂的计
+算。
 
-Our solution is to cap the maximum number of steps that a program is allowed to
-run for in a single transaction. Since blocks have a size limit that caps the
-number of transactions per block, there is also a cap on the number of
-computation steps per block. This rate limitation foils CPU-usage
-denial-of-service attacks. Meanwhile, legitimate users can issue multiple
-transactions to compute more steps than allowed in a single transaction,
-though at a limited rate. Miners may decide to exclude too long of an execution
-if they feel the included fee is too small. Since the Tezos protocol is
-amendable, the cap can be increased in future revisions and new cryptographic
-primitives included in the scripting language as the need develops.
+%% Our solution is to cap the maximum number of steps that a program
+%% is allowed to run for in a single transaction. Since blocks have a
+%% size limit that caps the number of transactions per block, there is
+%% also a cap on the number of computation steps per block. This rate
+%% limitation foils CPU-usage denial-of-service attacks. Meanwhile,
+%% legitimate users can issue multiple transactions to compute more
+%% steps than allowed in a single transaction, though at a limited
+%% rate. Miners may decide to exclude too long of an execution if they
+%% feel the included fee is too small. Since the Tezos protocol is
+%% amendable, the cap can be increased in future revisions and new
+%% cryptographic primitives included in the scripting language as the
+%% need develops.
+我们的解决方案是对最大步数加一个限制。因为区块有一个大小的限制，转账的
+数量也因此被限制，所以也有一个针对每个区块运算步数的上限。这个限制让针
+对CPU使用的DOS攻击变得无效。同时，有效的用户可以发行多个交易来计算，比
+单个交易允许的更多的步骤数。Miners或许可以决定忽略太长的执行，如果他们
+觉得被包含的费用过于低。因为Tezos的协议可以被修改，这个上限可以在未来
+被提升，而随着需求的产生，新的加密算法也可以被添加到scripting语言。
 
-\subsection{Correctness}
-Bitcoin underpins a \$8B valuation with a modest code base. As security
-researcher Dan Kaminsky explains, Bitcoin looks like a security nightmare on
-paper. A \verb!C++! code base with a custom binary protocol powers nodes
-connected to the Internet while holding e-cash, sounds like a recipe for
-disaster. \verb!C++! programs are often riddled with memory corruption bugs.
-When they are connecting to the Internet, this creates vulnerabilities
-exploitable by remote attackers. E-cash gives an immediate payoff to any
-attacker clever enough to discover and exploit such a vulnerability.
+%% \subsection{Correctness}
+\subsection{正确性}
+%% Bitcoin underpins a \$8B valuation with a modest code base. As
+%% security researcher Dan Kaminsky explains, Bitcoin looks like a
+%% security nightmare on paper. A \verb!C++! code base with a custom
+%% binary protocol powers nodes connected to the Internet while
+%% holding e-cash, sounds like a recipe for disaster. \verb!C++!
+%% programs are often riddled with memory corruption bugs.  When they
+%% are connecting to the Internet, this creates vulnerabilities
+%% exploitable by remote attackers. E-cash gives an immediate payoff
+%% to any attacker clever enough to discover and exploit such a
+%% vulnerability.
+比特币底下是八十亿美元市值的市场。正如安全研究员Dan Kaminsky所解释的，
+比特币看上去像一个安全的噩梦。一个\verb!C++!的代码基础外加一个定制的二
+元协议节点通过互联网互联并保存电子现金 - 这样的配置听上去似乎是一个完
+全的灾难。\verb!C++!语言有各种内存腐败的bug。 当他们被通过互联网链接在
+一起的时候，这将产生可被远程攻击者所利用的弱点。如果攻击者足够聪明到可
+以发现系统弱点，那么电子现金是一个直接利益动机。
 
-Fortunately, Bitcoin's implementation has proven very resilient to attacks
-thus far, with some exceptions. In August 2010, a bug where the sum of two
-outputs overflowed to a negative number allowed attackers to create two
-outputs of $92233720368.54$ coins from an input of $0.50$ coins.
-More recently, massive vulnerabilities such as the heartbleed bug
-have been discovered in the OpenSSL libraries. These vulnerabilities have
-one thing in common, they happened because languages like \verb!C! and
-\verb!C++! do not perform any checks on the operations they perform. For the
-sake of efficiency, they may access random parts of the memory, add integers
-larger than natively supported, etc. While these vulnerabilities have spared
-Bitcoin, they do no not bode well for the security of the system.
+%% Fortunately, Bitcoin's implementation has proven very resilient to
+%% attacks thus far, with some exceptions. In August 2010, a bug where
+%% the sum of two outputs overflowed to a negative number allowed
+%% attackers to create two outputs of $92233720368.54$ coins from an
+%% input of $0.50$ coins.  More recently, massive vulnerabilities such
+%% as the heartbleed bug have been discovered in the OpenSSL
+%% libraries. These vulnerabilities have one thing in common, they
+%% happened because languages like \verb!C! and \verb!C++! do not
+%% perform any checks on the operations they perform. For the sake of
+%% efficiency, they may access random parts of the memory, add
+%% integers larger than natively supported, etc. While these
+%% vulnerabilities have spared Bitcoin, they do no not bode well for
+%% the security of the system.
+幸运的是，比特币的实现到目前为止被证明是足够的健壮的，在绝大多数情况下。
+在2010年的八月份，一个系统的漏洞让攻击者通过一个0.5个币的input创造两个
+92233720368.54 币的输出。更近的一次是大量的漏洞例如heartbleed漏洞被在
+OpenSSL的代码库中被发现。这些个弱点有一个共同点 - 他们产生的原因是因为
+\verb!C!或者\verb!C++!这样的编程语言并不检查他们执行的operation。基于
+效率的考虑，他们都可以获得进入权限。虽然比特币并没有被这些问题所摧毁，
+但他们确实让系统安全收到不断困扰。
 
-Other languages do not exhibit those problems. OCaml is a functional programming
-language developed by the INRIA since 1996 (and itself based on earlier
-efforts). Its speed is comparable to that of \verb!C++! and it generally
-features among the fastest programming languages in benchmarks\cite{shootout}.
-More importantly, OCaml is strongly typed and offers a powerful type inference
-system. Its expressive syntax and semantics, including powerful pattern matching
-and higher-order modules, make it easy to concisely and correctly describe the
-type of logic underpinning blockchain based protocols.
+%% Other languages do not exhibit those problems. OCaml is a
+%% functional programming language developed by the INRIA since 1996
+%% (and itself based on earlier efforts). Its speed is comparable to
+%% that of \verb!C++! and it generally features among the fastest
+%% programming languages in benchmarks\cite{shootout}.  More
+%% importantly, OCaml is strongly typed and offers a powerful type
+%% inference system. Its expressive syntax and semantics, including
+%% powerful pattern matching and higher-order modules, make it easy to
+%% concisely and correctly describe the type of logic underpinning
+%% blockchain based protocols.
+有些语言都没有这问题。OCaml是一个功能上的程序语言被INRIA在1996年所开发
+出来,而它自己也是建立在之前的努力之上的。它的速度和\verb!C++!差不多，
+它在各个指标上大致和最快的编程语言不相上下\cite{shootout}。更重要的是
+OCaml是非常强的类型,并提供非常强大的类型推理系统，语法和句法，包括强大
+的模式搭配和高秩序模块，这让这个编程语言很容易集成和正确地表述程序的基
+于底层区块链的协议。
 
-OCaml's semantic is fairly rigorous and a very large subset has been
-formalized\cite{semantic}, which removes any ambiguity as to what is the
-intended behavior of amendments.
+%% OCaml's semantic is fairly rigorous and a very large subset has
+%% been formalized\cite{semantic}, which removes any ambiguity as to
+%% what is the intended behavior of amendments.
+OCaml的句法非常的严谨，并且其很多的子项都已经被完全形式化
+\cite{semantic}，这也就去除了很多模糊性，尤其是关于修改行为的含糊。
 
-In addition, Coq, one of the most advanced proof checking software
-is able to extract OCaml code from proofs. As Tezos matures, it will be
-possible to automatically extract key parts of the protocol's code from
-mathematical proofs of correctness.
+%% In addition, Coq, one of the most advanced proof checking software is
+%% able to extract OCaml code from proofs. As Tezos matures, it will be
+%% possible to automatically extract key parts of the protocol's code
+%% from mathematical proofs of correctness.
+同时，Coq作为最先进的证据核实软件，可以从证据中提取出OCaml代码。随着
+Tezos变得越来越成熟，它将能够自动地从协议代码中提取关键部分，并在数学
+意义上证明它的正确性。
 
-Examples of spectacular software failure abound. The heartbleed bug caused
-millions of dollars in damages. In 2013, a single bug at high-frequency trading
-firm Knight capital caused half a billion dollars worth of losses. In 1996, an
-arithmetic overflow bug caused the crash of Ariane 5, a rocket that had cost
-\$7B to develop; the cost of the rocket and the cargo was estimated at \$500M.
+%% Examples of spectacular software failure abound. The heartbleed bug
+%% caused millions of dollars in damages. In 2013, a single bug at
+%% high-frequency trading firm Knight capital caused half a billion
+%% dollars worth of losses. In 1996, an arithmetic overflow bug caused
+%% the crash of Ariane 5, a rocket that had cost \$7B to develop; the
+%% cost of the rocket and the cargo was estimated at \$500M.
+很多软件失败的例子。例如heartbleed漏洞就导致数百万美元的损失。在2013年，
+一个高频交易机构Knight资本因为一个bug导致5亿美元的损失。在1996年，一个
+arithmetic的溢出bug导致Ariane5火箭爆炸，导致70亿美元开发成本火箭报废，
+火箭费用和运载物品的合计代价约为五亿美元。
 
-All of these bugs could have been prevented with the use of formal verification.
-Formal verification has progressed by leaps and bounds in recent years,
-it is time to use it in real systems.
+%% All of these bugs could have been prevented with the use of formal
+%% verification.  Formal verification has progressed by leaps and
+%% bounds in recent years, it is time to use it in real systems.
+所有的这些漏洞都可以通过“正式确认”被防止。正式确认技术已经发生了天翻地
+覆的变革。是时候在现实的系统中加以运用了。
 
-\section{Abstract Blockchains}
+%% \section{Abstract Blockchains}
+\section{抽象的区块链}
 
-Tezos attempts to represent a blockchain protocol in the most general way
-possible while attempting to remain as efficient as a native protocol.
-The goal of a blockchain is to represent a single state being concurrently
-edited. In order to avoid conflicts between concurrent edits, it represents the
-state as a ledger, that is as a series of transformations applied to an initial
-state. These transformations are the ``blocks'' of the blockchain, and --- in
-the case of Bitcoin --- the state is mostly the set of unspent outputs. Since
-the blocks are created asynchronously by many concurrent nodes, a block tree is
-formed. Each leaf of the tree represents a possible state and the end of a
-different blockchain. Bitcoin specifies that only one branch should be
-considered the valid branch: the one with the greatest total difficulty.
-Blocks, as their name suggests, actually bundle together
-multiple operations (known as transactions in the case of Bitcoin).
-These operations are sequentially applied to the state.
+%% Tezos attempts to represent a blockchain protocol in the most
+%% general way possible while attempting to remain as efficient as a
+%% native protocol. The goal of a blockchain is to represent a single
+%% state being concurrently edited. In order to avoid conflicts
+%% between concurrent edits, it represents the state as a ledger, that
+%% is as a series of transformations applied to an initial
+%% state. These transformations are the ``blocks'' of the blockchain,
+%% and --- in the case of Bitcoin --- the state is mostly the set of
+%% unspent outputs. Since the blocks are created asynchronously by
+%% many concurrent nodes, a block tree is formed. Each leaf of the
+%% tree represents a possible state and the end of a different
+%% blockchain. Bitcoin specifies that only one branch should be
+%% considered the valid branch: the one with the greatest total
+%% difficulty.  Blocks, as their name suggests, actually bundle
+%% together multiple operations (known as transactions in the case of
+%% Bitcoin).  These operations are sequentially applied to the state.
+Tezos试图代表一个区块链的协议，在最广泛的方式，并且试图保持作为一个原
+始的协议的有效性。这样的一个区块链的目标是代表一个独立的不断地被编辑的
+状态。为了被避免两个同步发生编辑的冲突,它代表了账本的状态，也就是一系
+列被运用到初始状态的转变。这些个转变是区块链的``区块''，而且 --- 在比
+特币里面 --- 这个状态主要是未被花费的输出的集合。因为区块被非对称的很
+多的节点创造出来这个树的每一个节点都代表一个可能的状态，以及一个不同的
+区块链。比特币认定只有一个分支是有效的分支，而最有效的分支就是那个结合
+了最高难度的分支。区块，就像它的名字所暗示的那样，只是把不同的
+operations绑定在一起 （在比特币系统中，这是转账）。这些系统随后被应用
+到状态上来。
 
-\subsection{Three Protocols}
+%% \subsection{Three Protocols}
+\subsection{三层协议}
 
-It is important to distinguish three protocols in cryptoledgers:
-the network protocol, the transaction protocol, and the consensus protocol.
+%% It is important to distinguish three protocols in cryptoledgers:
+%% the network protocol, the transaction protocol, and the consensus
+%% protocol.
+非常重要的一点是要区分加密账簿中的三个协议：网络协议，转账协议，以及共
+识协议。
 
-The role of the meta shell is to handle the network protocol
-in as agnostic a way as possible while delegating the transaction and consensus
-protocol to an abstracted implementation.
+%% The role of the meta shell is to handle the network protocol in as
+%% agnostic a way as possible while delegating the transaction and
+%% consensus protocol to an abstracted implementation.
+其中元壳所扮演的角色是负责这个网络的协议，在一个完全不可知的场景中，把
+转账和共识协议发送给抽象的实现。
 
-\subsubsection{Network Protocol}
+%% \subsubsection{Network Protocol}
+\subsubsection{网络协议}
 
-The network protocol in Bitcoin is essentially the gossip network that allows
-the broadcasting of transactions, the downloading and publishing of blocks,
-the discovery of peers, etc. It is where most development occurs. For instance,
-bloom filters were introduced in 2012 through BIP0037 to speed up the simple
-payment verification for clients which do not download the whole blockchain.
+%% The network protocol in Bitcoin is essentially the gossip network
+%% that allows the broadcasting of transactions, the downloading and
+%% publishing of blocks, the discovery of peers, etc. It is where most
+%% development occurs. For instance, bloom filters were introduced in
+%% 2012 through BIP0037 to speed up the simple payment verification
+%% for clients which do not download the whole blockchain.
+比特币的网络协议本质上是一个流言网络，它让交易得以广播，以及区块得以下
+载和发表，以及peers被发现，等等。这是开发最为集中的区域。例如，布鲁姆
+过滤在2012年通过BIP0037被引入，引入来不需要下载全部区块链的客户端从而
+加速简单的支付确认。
 
-Changes to the network protocol are relatively uncontroversial. There
-may be initial disagreements on the desirability of these changes, but all
-parties interests are fundamentally aligned overall.
+%% Changes to the network protocol are relatively
+%% uncontroversial. There may be initial disagreements on the
+%% desirability of these changes, but all parties interests are
+%% fundamentally aligned overall.
+这些对网络协议的改变相对而言不是那么有争议。可能存在起初对这些改变可行
+度的争议，但是所有的参与者的利益都在本质上一致的。
 
-These changes do not need to happen in concert either. One could devise a way to
-integrate Bitcoin transactions steganographically into pictures of cats posted
-on the Internet. If enough people started publishing transactions this way,
-miners would start parsing cat pictures to find transactions to include in the
-blockchain.
+%% These changes do not need to happen in concert either. One could
+%% devise a way to integrate Bitcoin transactions steganographically
+%% into pictures of cats posted on the Internet. If enough people
+%% started publishing transactions this way, miners would start
+%% parsing cat pictures to find transactions to include in the
+%% blockchain.
+这些改变并不需要同步发生。一个人可以找到一种方式将比特币的交易上添加自
+己宠物猫的照片。如果足够的人开始用这种方式来发表他们的交易，那么矿工就
+会开始parse猫的照片来寻找他们添加到区块链的交易。
 
-While a healthy network requires compatibility, competing innovation in the
-network protocol generally strengthens a cryptocurrency.
+%% While a healthy network requires compatibility, competing
+%% innovation in the network protocol generally strengthens a
+%% cryptocurrency.
+尽管一个健康的网络需要有兼容性，在网络协议上竞争性的创新通常会让一个加
+密货币变得更加茁壮。
 
-\subsubsection{Transaction Protocol}
-The transaction protocol describes what makes transactions valid. It is defined
-in Bitcoin, for instance, through a scripting language. First, coins are created
-by miners when they find a block. The miner then attaches a script to the coins
-that he mined.
+%% \subsubsection{Transaction Protocol}
+\subsubsection{转账协议}
+%% The transaction protocol describes what makes transactions
+%% valid. It is defined in Bitcoin, for instance, through a scripting
+%% language. First, coins are created by miners when they find a
+%% block. The miner then attaches a script to the coins that he mined.
+交易协议规定了哪种交易是正确的。 这在比特币上是通过scripting语言加以实
+现的。首先，比特币是由矿工通过挖矿生产出来的矿工然后在他所挖出的币上添
+加一个script
 
-Such a script is known as an ``unspent output''. Transactions combine outputs
-by providing arguments for which their scripts evaluate to true. These arguments
-can be thought of keys and the scripts as padlocks.
+%% Such a script is known as an ``unspent output''. Transactions
+%% combine outputs by providing arguments for which their scripts
+%% evaluate to true. These arguments can be thought of keys and the
+%% scripts as padlocks.
+这样的一个script也就是所谓的``unspent output''。交易通过对script数值的
+辩论和确认来合并outputs。这些辩论就像是钥匙而那些scripts就是锁。
 
-In simple transactions, such scripts are merely signature-checking scripts but
-more complex scripts can be formed. These outputs are added up and allocated
-among a set of new outputs. If the amount of output spent is greater than the
-amount allocated, the difference can be claimed by the miner.
+%% In simple transactions, such scripts are merely signature-checking scripts but
+%% more complex scripts can be formed. These outputs are added up and allocated
+%% among a set of new outputs. If the amount of output spent is greater than the
+%% amount allocated, the difference can be claimed by the miner.
+在简单的转账中， 这些scripts仅仅是做签名的审核，但是也存在更复杂的
+scripts。这些outputs被添加在一起并被放置到一组新的outputs之中。如果被
+花掉的output的数量比allocated的量要打，那么矿工可以获得差额。
 
-Changes to the transaction protocol are more controversial than changes to
-the network protocol. While a small group of people could unilaterally start
-using the cat-picture broadcast algorithm, changing the transaction protocol
-is trickier. Such changes typically do not affect the block validity
-and thus only require the cooperation of a majority of the miners.
-These are generally referred to as ``soft-fork''.
+%% Changes to the transaction protocol are more controversial than
+%% changes to the network protocol. While a small group of people
+%% could unilaterally start using the cat-picture broadcast algorithm,
+%% changing the transaction protocol is trickier. Such changes
+%% typically do not affect the block validity and thus only require
+%% the cooperation of a majority of the miners.  These are generally
+%% referred to as ``soft-fork''.
+和那些对网络协议的改变相比，对转账协议的改变更加富有争议性。尽管一小部
+分人就可以单方面的改造网络，使用猫咪照片来广播交易，但是要对交易协议本
+身进行修改则要复杂的多。这样的改变通常并不影响区块的有效性，因此仅仅要
+求大多数的矿工的同意。这些通常被称为``软分叉''。
 
-Some relatively uncontroversial changes still stand a chance to be implemented
-there. For instance a fix to the transaction malleability issue would be a
-transaction protocol level change. The introduction of Zerocash, also a
-transaction protocol level change, risks being too controversial to be
-undertaken.
+%% Some relatively uncontroversial changes still stand a chance to be
+%% implemented there. For instance a fix to the transaction
+%% malleability issue would be a transaction protocol level
+%% change. The introduction of Zerocash, also a transaction protocol
+%% level change, risks being too controversial to be undertaken.
+那些相对不那么有争议性的改变在这里有更多的机会被实现。而对交易延展性的
+修改，零币的引进则是一个转账协议层面的改变，则很有可能产生争议。
 
-\subsubsection{Consensus Protocol}
-The consensus protocol of Bitcoin describes the way consensus is built
-around the most difficult chain and the miner reward schedules.
-It allows miners to draw transactions from the coin base,
-it dictates how difficulty changes over time,
-it indicates which blocks are valid
-and which are part of the ``official'' chain.
+%% \subsubsection{Consensus Protocol}
+\subsubsection{共识协议}
+%% The consensus protocol of Bitcoin describes the way consensus is
+%% built around the most difficult chain and the miner reward
+%% schedules.  It allows miners to draw transactions from the coin
+%% base, it dictates how difficulty changes over time, it indicates
+%% which blocks are valid and which are part of the ``official''
+%% chain.
+比特币的共识协议规定了共识需要被建立在难度最高的链上，并包含矿工接受收
+益的细则。它允许矿工从coinbase上获取交易，规定了难度调整规则，有效块的
+标准，以及哪个是``主链''的一部分。
 
-This is by far the most central and most difficult to change protocol,
-often requiring a ``hard-fork'', that is a fork invalidating old blocks.
-For instance, the proof of work system, as is the reliance on SHA256 as a
-proof-of-work system, etc.
+%% This is by far the most central and most difficult to change
+%% protocol, often requiring a ``hard-fork'', that is a fork
+%% invalidating old blocks.  For instance, the proof of work system,
+%% as is the reliance on SHA256 as a proof-of-work system, etc.
+这是目前最核心，也是最难修改的协议，通常需要```分叉''来对老的区块进行
+排斥。对于PoW系统而言，目前所依赖的是SHA256加密算法。
 
-\subsection{Network Shell}
-Tezos separates those three protocols.
-The transaction protocol and the consensus protocol
-are implemented in an isolated module plugged
-into a generic network shell responsible for maintaining the blockchain.
+%% \subsection{Network Shell}
+\subsection{网络壳}
+%% Tezos separates those three protocols.  The transaction protocol
+%% and the consensus protocol are implemented in an isolated module
+%% plugged into a generic network shell responsible for maintaining
+%% the blockchain.
+Tezos将这三个协议进行了分离。这个转账协议和共识协议在一个封闭的模块中
+被实现，置入一个负责维护区块链的通用的网络壳内。
 
-In order for the protocol to remain generic, we define the following interface.
-We want our blockchain to represent the current ``state'' of the economy,
-which we call in Tezos the \textbf{Context}.
-This could include the balances of the various accounts
-and other informations such as the current block number.
-Blocks are seen as operators that transform an old state into a new state.
 
-In this respect, a protocol can be described by only two functions:
+%% In order for the protocol to remain generic, we define the
+%% following interface.  We want our blockchain to represent the
+%% current ``state'' of the economy, which we call in Tezos the
+%% \textbf{Context}.  This could include the balances of the various
+%% accounts and other informations such as the current block number.
+%% Blocks are seen as operators that transform an old state into a new
+%% state.
+为了让协议变得更加通用，我们定义了以下的界面。我们让我们的区块链来代表
+我们现在的经济``状态''，我们命名其为Tezos the \textbf{Context}这或许包
+括各种账户余额和其它信息，例如各种当前的区块编码。区块被视作把旧状态转
+换为新状态的操作。
+
+%% In this respect, a protocol can be described by only two functions:
+在这个方面，一个协议可以被描述为仅有两个功能：
 \begin{itemize}
-\item[-] \textbf{apply} which takes a Context and a block and returns
-either a valid Context or an invalid result (should the block be invalid)
-\item[-] \textbf{score} which takes a Context and returns a score
-allowing us to compare various leafs of the blockchain
-to determine the canonical one.
-In Bitcoin, we would simply record the total difficulty
-or the chain inside the Context and return this value.
+%% \item[-] \textbf{apply} which takes a Context and a block and
+%%   returns either a valid Context or an invalid result (should the
+%%   block be invalid)
+\item[-] \textbf{运行} 这需要一个语境（Context）和一个区块。这个区块要
+  么符合要求，要么不符合要求（假如区块不合要求的话）
+%% \item[-] \textbf{score} which takes a Context and returns a score
+%%   allowing us to compare various leafs of the blockchain to
+%%   determine the canonical one.  In Bitcoin, we would simply record
+%%   the total difficulty or the chain inside the Context and return
+%%   this value.
+\item[-] \textbf{得分} 同样需要一个语境，并且受到一个得分，可以让我们
+  来对比不同区块链叶来决定哪支是主链. 在比特币里，我们仅仅是简单地记录
+  总的难度，或者是语境链，并返回这个数值。
 \end{itemize}
 
-Strikingly, these two functions alone can implement \emph{any} blockchain based
-crypto-ledger. In addition, we attach those functions to the context itself
-and expose the following two functions to the protocol:
+%% Strikingly, these two functions alone can implement \emph{any}
+%% blockchain based crypto-ledger. In addition, we attach those
+%% functions to the context itself and expose the following two
+%% functions to the protocol:
+值得注意的是，这两个功能可以实现任何一个基于区块链的加密账本。除此以外，
+我们把以下两个功能暴露给协议层：
 
 \begin{itemize}
-\item[-] \textbf{set\_test\_protocol} which replaces the protocol used in the
-test-net with a new protocol (typically one that has been adopted through a
-stakeholder voter).
-\item[-] \textbf{promote\_test\_protocol} which replaces the current protocol
-with the protocol currently being tested
+%% \item[-] \textbf{set\_test\_protocol} which replaces the protocol
+%% used in the test-net with a new protocol (typically one that has
+%% been adopted through a stakeholder voter).
+\item[-] \textbf{设置测试协议}用一个新的协议来替代测试网中使用的协议
+  （特别是通过持币者投票来被执行的那个）
+%% \item[-] \textbf{promote\_test\_protocol} which replaces the
+%% current protocol with the protocol currently being tested
+\item[-] \textbf{促进测试代码}用目前的测试协议来替代目前的协议。
 \end{itemize}
 
-These two procedures allow the protocol to validate its own replacement.
-While the seed protocol relies on a simple super-majority rule with a quorum,
-more complex rules can be adopted in the future.
-For instance, the stakeholders could vote
-to require certain properties to be respected by any future protocol.
-This could be achieved by integrating a proof checker within the protocol
-and requiring that every amendment include a proof of constitutionality.
+%% These two procedures allow the protocol to validate its own
+%% replacement. While the seed protocol relies on a simple
+%% super-majority rule with a quorum, more complex rules can be
+%% adopted in the future.  For instance, the stakeholders could vote
+%% to require certain properties to be respected by any future
+%% protocol.  This could be achieved by integrating a proof checker
+%% within the protocol and requiring that every amendment include a
+%% proof of constitutionality.
+这两个操作让协议来确认自己的替代品。尽管种子协议依赖于一个简单的绝大多
+数投票通过机制，未来我们可以引入更负责的投票规则。例如，股东可以通过投
+票来要求特定的特性被加入到未来的协议中区。这个可以通过一个证明检测机制-协
+议内部的，来加以实现，并且要求每一个修改包含一个宪法证明。
 
-\section{Proof-of-Stake}
-Tezos can implement any type of blockchain algorithm:
-proof-of-work, proof-of-stake, or even centralized.
-Due to the shortcomings of the proof-of-work mechanism,
-the Tezos seed protocol implements a proof-of-stake system.
-There are considerable theoretical hurdles to designing a working
-proof-of-stake systems, we will explain our way of dealing with 
-them.\footnote{A full, technical, description of our proof-of-stake system is
-given in the Tezos white paper.}
+%% \section{Proof-of-Stake}
+\section{股权证明}
+%% Tezos can implement any type of blockchain algorithm:
+%% proof-of-work, proof-of-stake, or even centralized.  Due to the
+%% shortcomings of the proof-of-work mechanism, the Tezos seed
+%% protocol implements a proof-of-stake system.  There are
+%% considerable theoretical hurdles to designing a working
+%% proof-of-stake systems, we will explain our way of dealing with
+%% them.\footnote{A full, technical, description of our proof-of-stake
+%% system is given in the Tezos white paper.}
+Tezos可以执行任何一个种类的区块链程序：包括PoW，PoS甚至中心化的方式。
+由于PoW的固有缺陷，Tezos的种子协议目前按照PoS 的方式实现。PoS系统毫无
+疑问面临很多的理论上的瓶颈，这里我们要解释一下我们是如何来解决这些问题
+的。\footnote{我们的技术白皮书提供了一个全面的技术性的对PoS的描述}
 
-\subsection{Is Proof-of-Stake Impossible?}
+%% \subsection{Is Proof-of-Stake Impossible?}
+\subsection{股权证明可行吗?}
 
-There are very serious theoretical hurdles to any proof-of-stake system.
-The main argument against the very possibility of a proof-of-stake system
-is the following:
-a new user downloads a client and connects for the first time to the network.
-He receives a tree of blocks with two larges branches
-starting from the genesis hash.
-Both branches display a thriving economic activity,
-but they represent two fundamentally different histories.
-One has clearly been crafted by an attacker, but which one is the real chain?
+%% There are very serious theoretical hurdles to any proof-of-stake
+%% system.  The main argument against the very possibility of a
+%% proof-of-stake system is the following: a new user downloads a
+%% client and connects for the first time to the network.  He receives
+%% a tree of blocks with two larges branches starting from the genesis
+%% hash.  Both branches display a thriving economic activity, but they
+%% represent two fundamentally different histories.  One has clearly
+%% been crafted by an attacker, but which one is the real chain?
+任何一个PoS的系统都存在严重的理论阻碍。主要反对观点包括以下：一个新的
+用户下载一个客户端，并且首次和网络互连。他接受到两个区块树，从最开始的
+创世块开始。两条分支展现出一个非常茁壮的经济活动，但是它们代表了两个完
+全不同的历史。一个非常明确的被攻击者所塑造，但是怎样才能辨别哪条是真正
+的链条呢？
 
-In the case of Bitcoin, the canonical blockchain is the one representing the
-largest amount of work. This does not mean that rewriting history is impossible,
-but it is costly to do so, especially as one's hashing power could be used
-towards mining blocks on the real blockchain.
-In a proof-of-stake system where blocks are signed by stakeholders,
-a former stakeholder (who has since cashed out) could use his old signatures
-to costlessly fork the blockchain
---- this is known as the nothing-at-stake problem.
+%% In the case of Bitcoin, the canonical blockchain is the one
+%% representing the largest amount of work. This does not mean that
+%% rewriting history is impossible, but it is costly to do so,
+%% especially as one's hashing power could be used towards mining
+%% blocks on the real blockchain.  In a proof-of-stake system where
+%% blocks are signed by stakeholders, a former stakeholder (who has
+%% since cashed out) could use his old signatures to costlessly fork
+%% the blockchain --- this is known as the nothing-at-stake problem.
+以比特币为例，正宗的区块链是哪个代表着最大工作量证明的分支。这并不意味
+着重写历史是完全不可能的。但是这样做是非常高的成本，特别是当一个人的算
+力挖出块的时候。在一个PoS系统中，区块被股东进行签名，一个前股东-他已经
+退出，可以使用他的旧的签名来无成本的分叉区块链，这被称为Nothing at
+stake问题。
 
+%% \subsection{Mitigations}
+\subsection{减低负面影响的措施}
 
-\subsection{Mitigations}
+%% While this theoretical objection seems ironclad, there are
+%% effective mitigations.  An important insight is to consider that
+%% there are roughly two kind of forks: very deep ones that rewrite a
+%% substantial fraction of the history and short ones that attempt to
+%% double spend.  On the surface there is only a quantitative
+%% difference between the two but in practice the incentives,
+%% motivations, and mitigation strategies are different.
+尽管理论上的批评似乎是无丝毫漏洞，但是还是存在有效的消除影响的手段的。
+一个很重要的洞见是这里有两种分叉。一个非常深，可以重写一个相当久的历史，
+一个是那些只是试图进行双花的。在表面上，两者之间只是存在一个数量上的不
+同，但是在实际上，目的动机以及解决方案(mitigation)都有很大的不同。
 
-While this theoretical objection seems ironclad, there are effective mitigations.
-An important insight is to consider that there are roughly two kind of forks:
-very deep ones that rewrite a substantial fraction of the history
-and short ones that attempt to double spend.
-On the surface there is only a quantitative difference between the two
-but in practice the incentives, motivations,
-and mitigation strategies are different.
+%% No system is unconditionally safe, not Bitcoin, not even public key
+%% cryptography.  Systems are designed to be safe for a given
+%% \emph{threat model}. How well that model captures reality is,
+%% \emph{in fine}, an empirical question.
+没有任何一个系统可以做到无条件的安全 比特币做不到，公钥加密学也做不到。
+系统的安全措施是针对特定\emph{威胁模型}设计的。这个模型如何精准地对应
+现实是一个非常\emph{精细}和实际的问题。
 
-No system is unconditionally safe, not Bitcoin, not even public key
-cryptography.  Systems are designed to be safe for a given \emph{threat model}. How well
-that model captures reality is, \emph{in fine}, an empirical question.
+%% \subsubsection{Checkpoints}
+\subsubsection{审核点}
+%% Occasional checkpoints can be an effective way to prevent very long
+%% blockchain reorganizations.  Checkpoints are a hack. As Ben Laurie
+%% points out, Bitcoin's use of checkpoints taints its status as a
+%% fully decentralized currency\cite{distrib_impossible}.
+不规则的制衡点可以有效地避免一个长链重组问题。制衡点可以成为一种黑客攻
+击方式。就像Ben Laurie所指出的那样，比特币对制衡点的使用有损于它的去中
+心化\cite{distrib_impossible}。
 
-\subsubsection{Checkpoints}
-Occasional checkpoints can be an effective way to prevent very long blockchain reorganizations.
-Checkpoints are a hack. As Ben Laurie points out, Bitcoin's use of checkpoints
-taints its status as a fully decentralized currency\cite{distrib_impossible}.
+%% Yet, in practice, annual or even semi-annual checkpoints hardly
+%% seem problematic.  Forming a consensus over a single hash value
+%% over a period of months is something that human institutions are
+%% perfectly capable of safely accomplishing.  This hash can be
+%% published in major newspapers around the world, carved on the
+%% tables of freshmen students, spray painted under bridges, included
+%% in songs, impressed on fresh concrete, tattooed on pet ferrets...
+%% there are countless ways to record occasional checkpoints in a way
+%% that makes forgery impossible.  In contrast, the problem of forming
+%% a consensus over a period of minutes is more safely solved by a
+%% decentralized protocol.
+但是实际上，永久的或者是半永久的制衡点都是没有问题的。人类现有的机构有
+足够的能力在几个月的时间内针对一个单独的哈希形成一个共识。这个哈希可以
+在全球主要的报纸上发表，刻在餐桌上，喷涂在桥上，以及被编程在歌曲里，被
+标记在新的水泥平面上，纹在你的宠物雪貂身上, 有数不清的方式可以来记录这
+个制衡点，让作假变得不可能。而且，它可以在几分钟内形成共识并再一个中心
+化的系统内获得更加安全的实现。
 
-Yet, in practice, annual or even semi-annual checkpoints hardly seem problematic.
-Forming a consensus over a single hash value over a period of months is
-something that human institutions are perfectly capable of safely accomplishing.
-This hash can be published in major newspapers around the world,
-carved on the tables of freshmen students, spray painted under bridges,
-included in songs, impressed on fresh concrete, tattooed on pet ferrets...
-there are countless ways to record occasional checkpoints
-in a way that makes forgery impossible.
-In contrast, the problem of forming a consensus over a period of minutes
-is more safely solved by a decentralized protocol.
+%% \subsubsection{Statistical Detection}
+\subsubsection{统计检测}
+%% Transactions can reference blocks belonging to the canonical
+%% blockchain, thus implicitely signing the chain. An attacker
+%% attempting to forge a long reorganization can only produce
+%% transactions involving coins he controlled as off the last
+%% checkpoint. A long, legitimate, chain would typically show activity
+%% in a larger fraction of the coins and can thus be distinguished,
+%% statistically, from the forgery.
+转账可以指向属于最长链的区块，因此可以间接地来签这个链。如果一个攻击者
+试图复制一个长链，那么只能在最后制衡点后生成他控制的币的转账当一个长的
+有效的链显示一个相对大额转账时，存在方法可以以统计学的方式甄别真伪。
 
-\subsubsection{Statistical Detection}
-Transactions can reference blocks belonging to the canonical blockchain,
-thus implicitely signing the chain. An attacker attempting to forge a 
-long reorganization can only produce transactions involving coins he
-controlled as off the last checkpoint. A long, legitimate, chain would
-typically show activity in a larger fraction of the coins and can thus
-be distinguished, statistically, from the forgery.
-
-This family of techniques (often called TAPOS, for
-``transactions as proof of stake'') does not work well for short forks where the sample
-is too small to perform a reliable statistical test. However, they can be combined
-with a technique dealing with short term forks to form a composite selection
-algorithm robust to both type of forks.
+%% This family of techniques (often called TAPOS, for ``transactions
+%% as proof of stake'') does not work well for short forks where the
+%% sample is too small to perform a reliable statistical
+%% test. However, they can be combined with a technique dealing with
+%% short term forks to form a composite selection algorithm robust to
+%% both type of forks.
+这些技术通常被称为TAPOS，对于短的链，因为样本太少所以不足够进行有统计
+学意义的测试，所以不是特别有效。但是和一个技术同时使用是，这个方法可以
+用来处理短期的分叉，产生一个对两类分叉都足够健壮的选择程序。
 
 %% \paragraph{Cementing}
 %% Cementing --- a technique which consists in refusing to
@@ -670,184 +1095,278 @@ algorithm robust to both type of forks.
 %% or centralization than is already involved
 %% in the process of merely downloading the client.
 
-\subsection{The Nothing-At-Stake Problem}
-An interesting approach to solving the nothing-at-stake problem was
-outlined by Vitalik Buterin in the algorithm Slasher\cite{Slasher}.
-However, Slasher still relies on a proof of work mechanism to mine blocks
-and assumes a bound on the length of feasible forks.
+%% \subsection{The Nothing-At-Stake Problem}
+\subsection{Nothing-At-Stake 问题}
+%% An interesting approach to solving the nothing-at-stake problem was
+%% outlined by Vitalik Buterin in the algorithm Slasher\cite{Slasher}.
+%% However, Slasher still relies on a proof of work mechanism to mine
+%% blocks and assumes a bound on the length of feasible forks.
+一个有趣的解决问题的方式被Vitalik Buterin通过Slasher\cite{Slasher}代码
+提出。但Slasher仍然未摆脱PoW，并且假定了一个可行链的长度。
 
-We retain the main idea which consists in punishing double signers.
-If signing rewards are delayed, they can be withheld
-if any attempt at double spending is detected.
-This is enough to prevent a selfish stakeholder
-from opportunistically attempting to sign a fork
-for the sake of collecting a reward should the fork succeed.
-However, once rewards have been paid,
-this incentive to behave honestly disappears;
-thus, we use a delay long enough for TAPOS to become
-statistically significant or for checkpointing to take place.
+%% We retain the main idea which consists in punishing double signers.
+%% If signing rewards are delayed, they can be withheld if any attempt
+%% at double spending is detected.  This is enough to prevent a
+%% selfish stakeholder from opportunistically attempting to sign a
+%% fork for the sake of collecting a reward should the fork succeed.
+%% However, once rewards have been paid, this incentive to behave
+%% honestly disappears; thus, we use a delay long enough for TAPOS to
+%% become statistically significant or for checkpointing to take
+%% place.
+这里我们引入来一个创新的观点，就是对双重签名者的惩戒。如果对一个交易的
+签名延迟，这个交易可以被任何的双花企图被侦测到的时候被撤回。这足以防止
+一个自私的用户为了获得这个分支成功所带来的收益而机会主义地区试图签署一
+个分支加。然而，一旦一个奖励被支付，这个动机也就不复存在了。因此我们使
+用一个延迟的方法来让TAPOS变得在统计学意义上有效，或者为了让审查点变得
+更加有效。
 
-In order to incentivize stakeholders to behave honestly,
-we introduce a ticker system. A prospective miner must 
-burn a certain amount of coins in order to exercise his
-mining right. This amount is automatically returned to
-him if he fails to mine, or after a long delay.
+%% In order to incentivize stakeholders to behave honestly, we
+%% introduce a ticker system. A prospective miner must burn a certain
+%% amount of coins in order to exercise his mining right. This amount
+%% is automatically returned to him if he fails to mine, or after a
+%% long delay.
+为了让用户表现的更加诚实，我们推出了一个ticker系统。一个潜在的矿工必须
+烧掉一定量的币，让他来行使挖矿权。这个数量的币被自动地返还给他，如果他
+没有能够进行挖矿，或者耽搁了很长一段时间。
 
-In order to allow stakeholders not to be permanently connected
-to the Internet and not to expose private keys, a different,
-signature key is used.
+%% In order to allow stakeholders not to be permanently connected to
+%% the Internet and not to expose private keys, a different, signature
+%% key is used.
+为了让用户不去长时间与互联网联通时不暴露私钥，需要每次使用一个不同的签
+名密钥。
 
-\subsection{Threat Models}
-No system is unconditionally safe, not Bitcoin, not even public key
-cryptography. Systems are designed to be safe for a given \emph{threat model}. How well
-that model captures reality is, \emph{in fine}, an empirical question.
+%% \subsection{Threat Models}
+\subsection{威胁模型}
+%% No system is unconditionally safe, not Bitcoin, not even public key
+%% cryptography. Systems are designed to be safe for a given
+%% \emph{threat model}. How well that model captures reality is,
+%% \emph{in fine}, an empirical question.
+没有任何一个系统可以做到无条件的安全 比特币做不到，公钥加密学也做不到。
+系统的安全措施是针对特定\emph{威胁模型}设计的。这个模型如何精准地对应
+现实是一个非常\emph{精细}和实际的问题。
 
-Bitcoin does offer an interesting guarantee: it attempts to tolerate amoral
-but selfish participants. As long as miners do not collude, it is not necessary
-to assume that any participant is honest, merely than they prefer making money
-to destroying the network. However, non collusion, a key condition, is too
-often forgotten, and the claim of Bitcoin's
-``trustlessness'' is zealously repeated without much thought.
+%% Bitcoin does offer an interesting guarantee: it attempts to
+%% tolerate amoral but selfish participants. As long as miners do not
+%% collude, it is not necessary to assume that any participant is
+%% honest, merely than they prefer making money to destroying the
+%% network. However, non collusion, a key condition, is too often
+%% forgotten, and the claim of Bitcoin's ``trustlessness'' is
+%% zealously repeated without much thought.
+比特币的确提供了一个有趣的保证，试图容忍没有道德立场的自私的参与者. 只
+要矿工不进行勾结，就不必要来假定某个参与者是诚实的，而仅仅假定他们想赚
+更多的钱而不是摧毁这个网络。然而，“非勾结”成为一个非常重要的条件。而比
+特币所谓``不需要信任''这个特性往往被过度宣传却没有人真正去了解。
 
-With checkpointing (be it yearly), the same properties can be achieved by
-a proof-of-stake system.
+%% With checkpointing (be it yearly), the same properties can be
+%% achieved by a proof-of-stake system.
+通过引入检验点机制，PoS系统同样可以实现类似比特币的安全特性。
 
-Without checkpointing proof-of-stake systems cannot make this claim. Indeed,
-it would be theoretically possible for an attacker to purchase old keys from 
-a large number of former stakeholders, with no consequence to them. In this case,
-a stronger assumption is needed about participants, namely that a majority of current or
-former stakeholders cannot be cheaply corrupted into participating in an
-attack on the network. In this case, the role ``stake'' in the proof-of-stake is
-only to avoid adverse selection by malicious actors in the consensus group.
+%% Without checkpointing proof-of-stake systems cannot make this claim. Indeed,
+%% it would be theoretically possible for an attacker to purchase old keys from
+%% a large number of former stakeholders, with no consequence to them. In this case,
+%% a stronger assumption is needed about participants, namely that a majority of current or
+%% former stakeholders cannot be cheaply corrupted into participating in an
+%% attack on the network. In this case, the role ``stake'' in the proof-of-stake is
+%% only to avoid adverse selection by malicious actors in the consensus group.
+确实，理论上仍存在这种可能，就是一个攻击者可以购买旧密钥对网络进行攻击，
+而这样对他们没有任何不利后果。在这种情况下，需要一个更强健的假设，那就
+是参与者，也就是多数的目前或者从前的股权持有者，都不能够在一个针对网络
+攻击中被容易地贿赂。这种情况下，``股权''在股权证明的角色是避免恶意攻击
+者在共识集群中做出不利的选择。
 
 
+%% \section{Potential Developments}
+\section{可能的发展}
 
-\section{Potential Developments}
+%% In this section, we explore some ideas that we're specifically
+%% interested in integrating to the Tezos protocol.
+在这个部分中，我们将探索一些特有价值的想法，并将其整合到Tezos的规划中
+去。
 
-In this section, we explore some ideas
-that we're specifically interested in integrating to the Tezos protocol.
+%% \subsection{Privacy Preserving Transactions}
+\subsection{隐私保护转账}
+%% One of the most pressing protocol updates will be the introduction
+%% of privacy preserving transactions.  We know of two ways to achieve
+%% this: ring signatures and non-interactive zero-knowledge proofs of
+%% knowledge (NIZKPK).
+最紧急的协议升级将引入交易的隐私保证手段。我们知道两种方式来实现这个。
+一个是环形签名，另一个是非交互式的零知识证明机制。
 
-\subsection{Privacy Preserving Transactions}
-One of the most pressing protocol updates will be
-the introduction of privacy preserving transactions.
-We know of two ways to achieve this:
-ring signatures and non-interactive zero-knowledge proofs of knowledge
-(NIZKPK).
+%% \subsubsection{Ring Signatures}
+\subsubsection{环形签名}
+%% CryptoNote has built a protocol using ring signatures to preserve
+%% privacy.  Users are able to spend coins without revealing which of
+%% $N$ addresses spent the coins.  Double spenders are revealed and
+%% the transaction deemed invalid.  This works similarly to the
+%% coin-join protocol \emph{without} requiring the cooperation of the
+%% addresses involved in obfuscating the transaction.
+Crypto Note建造了一个协议，使用环形签名来保证隐私。用户可以能够在花币
+的同时不暴露$N$个地址中的那个花了这些币的地址。双花者将会暴露，而转账
+也被证实为无效这个和Coin-join相类似，而\emph{不需要}地址之间的合作。
 
-\subsubsection{Ring Signatures}
-CryptoNote has built a protocol using ring signatures to preserve privacy.
-Users are able to spend coins
-without revealing which of $N$ addresses spent the coins.
-Double spenders are revealed and the transaction deemed invalid.
-This works similarly to the coin-join protocol
-\emph{without} requiring the cooperation of the addresses involved in
-obfuscating the transaction.
+%% One of the main advantage of ring signatures is that they are
+%% comparatively simpler to implement than NIZKPK and rely on more
+%% mature cryptographic primitives which have stood the test of time.
+环形签名的一个主要的优势是他们的设置相对简单，比起NIZKPK,他们也更加依
+赖成熟的加密算法，这让他们更加能够经受时间的检验。
 
-One of the main advantage of ring signatures is that they are comparatively
-simpler to implement than NIZKPK and rely on more mature cryptographic
-primitives which have stood the test of time.
 
-\subsubsection{Non Interactive Zero-knowledge Proofs of Knowledge}
-Matthew Green et al. proposed the use of NIZKPK
-to achieve transaction untraceability in a blockchain based cryptocurrency.
-The latest proposition, Zerocash, maintains
-a set of coins with attached secrets in a Merkle tree.
-Committed coins are redeemed by providing a NIZKPK
-of the secret attached to a coin in the tree.
-It uses a relatively new primitive, SNARKs,
-to build very small proofs which can be efficiently checked.
+%% \subsubsection{Non Interactive Zero-knowledge Proofs of Knowledge}
+\subsubsection{非互动零知识证明}
+%% Matthew Green et al. proposed the use of NIZKPK to achieve
+%% transaction untraceability in a blockchain based cryptocurrency.
+%% The latest proposition, Zerocash, maintains a set of coins with
+%% attached secrets in a Merkle tree.  Committed coins are redeemed by
+%% providing a NIZKPK of the secret attached to a coin in the tree.
+%% It uses a relatively new primitive, SNARKs, to build very small
+%% proofs which can be efficiently checked.
+无交互的零知识证明Matthew Green和其他人建议使用NIZKPK来实现区块链虚拟
+货币的转账不可追踪性。他们最新的成果是能够在Merkle树上附着秘密的一种币。
+被提交的币通过提供一个附着在树上的币的秘密的NIZPK被认领。这使用一个相
+对新的原函数SNARKs，来建立体积非常小的证据。
 
-This technique is attractive but suffers from drawbacks.
-The cryptographic primitives involved are fairly new
-and have not been scrutinized as heavily
-as the relatively simple elliptic curve cryptography involved in Bitcoin.
+%% This technique is attractive but suffers from drawbacks.  The
+%% cryptographic primitives involved are fairly new and have not been
+%% scrutinized as heavily as the relatively simple elliptic curve
+%% cryptography involved in Bitcoin.
+这个技术是有吸引力的，但是也有一些问题。加密学的原函数比较新，并且没有
+被像椭圆曲线加密法那样被严密地验证过。
 
-Secondly, the construction of these proofs relies on the CRS model.
-This effectively means that a trusted setup is required,
-though the use of secure multi-party computation
-can reduce the risk that such a setup be compromised.
+%% Secondly, the construction of these proofs relies on the CRS model.
+%% This effectively means that a trusted setup is required, though the
+%% use of secure multi-party computation can reduce the risk that such
+%% a setup be compromised.
+第二，这些证据以来于CRS模型。这意味着需要一个被信任的设施，尽管使用安
+全的多元计算可能会减少这样设置被攻破的风险。
 
-\subsection{Amendment Rules}
+%% \subsection{Amendment Rules}
+\subsection{修改规则}
 
-\subsubsection{Constitutionalism}
+%% \subsubsection{Constitutionalism}
+\subsubsection{宪政主义}
 
-While this is more advanced, it is possible to integrate a proof checker
-within the protocol so that only amendments carrying a formal proof that
-they respect particular properties can be adopted. In effect this enforces
-a form of constitutionality.
+%% While this is more advanced, it is possible to integrate a proof
+%% checker within the protocol so that only amendments carrying a
+%% formal proof that they respect particular properties can be
+%% adopted. In effect this enforces a form of constitutionality.
+可能通过在协议内集成一个检验器的方法让任何修改携带一个形式证明，来保证
+它们对特定特性的接纳。这在事实上执行了某种类似宪法的特性。
 
+
+%% \subsubsection{Futarchy}
 \subsubsection{Futarchy}
-Robin Hanson has proposed that we vote on values and bet on beliefs.
-He calls such a system ``Futarchy''\cite{Futarchy}. The main idea
-is that values are best captured by a majoritarian consensus while the choice
-of policies conducive to realizing those values is best left to a prediction
-market.
+%% Robin Hanson has proposed that we vote on values and bet on beliefs.
+%% He calls such a system ``Futarchy''\cite{Futarchy}. The main idea
+%% is that values are best captured by a majoritarian consensus while the choice
+%% of policies conducive to realizing those values is best left to a prediction
+%% market.
+Robin Hanson曾经倡议我们对价值进行投票来决定我们的信仰\cite{Futarchy}。
+根据他的理论，最有价值的体系是多数人的共识，而哪些政策对实现那些价值是
+最优的则被留给了预测市场。
 
-This system can quite litteraly be implemented in Tezos. Stakeholders would
-first vote on a trusted datafeed representing the satisfaction of a value. 
-This might be for example the exchange rate of coins against a basket 
-of international currencies. An internal prediction market would be formed
-to estimate the change in this indicator conditional on various code 
-amendments being adopted. The market-making in those contracts can be
-subsidized by issuing coins to market makers in order to improve price discovery
-and liquidity. In the end, the amendment deemed most likely to improve the
-indicator would be automatically adopted.
+%% This system can quite litteraly be implemented in
+%% Tezos. Stakeholders would first vote on a trusted datafeed
+%% representing the satisfaction of a value.  This might be for
+%% example the exchange rate of coins against a basket of
+%% international currencies. An internal prediction market would be
+%% formed to estimate the change in this indicator conditional on
+%% various code amendments being adopted. The market-making in those
+%% contracts can be subsidized by issuing coins to market makers in
+%% order to improve price discovery and liquidity. In the end, the
+%% amendment deemed most likely to improve the indicator would be
+%% automatically adopted.
+这个系统可以在Tezos上得以提现。持有人可以先在一个受信任的代表价值被满
+足的信息收集器进行投票。投票的内容可以是Tezos币和一系列国际货币的汇率。
+一个内部的预测市场可以被建构出来来估测各种代码修改对这个指标的改变。对
+这些合约的做市可以收到赞助，通过给做市商发行代币来改善价格发现和流动性
+问题。在最后，被认为是最可能用来改善指标的方案被系统自动添加。
 
-\subsection{Solving Collective Action Problems}
-The collective action problem arises when multiple parties would benefit from
-taking an action but none benefit from individually undertaking the action.
-This is also known as the free-rider problem.
-There are several actions that the holders of a cryptocurrency could undertake
-to raise its profile or defend it against legal challenges.
+%% \subsection{Solving Collective Action Problems}
+\subsection{解决搭便车问题}
+%% The collective action problem arises when multiple parties would
+%% benefit from taking an action but none benefit from individually
+%% undertaking the action.  This is also known as the free-rider
+%% problem.  There are several actions that the holders of a
+%% cryptocurrency could undertake to raise its profile or defend it
+%% against legal challenges.
+当集体成员都会通过行动带来好处，但是没有一个单个成员可以通过单独采取行
+动而自己获得好处时，就会产生所谓的集体行动问题。这也被称为搭便车问题。
+这里有加密货币所有者可以提升平台的影响力以及来保护平台的合法合规性。
 
-\subsubsection{Raising Awareness}
+%% \subsubsection{Raising Awareness}
+\subsubsection{提高知名度}
 
-As of July 2014, the market capitalization of Bitcoin was around \$8B.
-By spending about 0.05\% of the Bitcoin monetary mass every month,
-Bitcoin could make highly visible
-charitable donations of \$1M \emph{every single week}.
-Would, as of 2014, an entire year of weekly charitable donations
-raise the value of Bitcoin by more than 0.6\%?
-We think the answer is clearly, and resoundingly ``yes''.
-Bitcoin stakeholders would be doing well while doing good.
+%% As of July 2014, the market capitalization of Bitcoin was around
+%% \$8B.  By spending about 0.05\% of the Bitcoin monetary mass every
+%% month, Bitcoin could make highly visible charitable donations of
+%% \$1M \emph{every single week}.  Would, as of 2014, an entire year
+%% of weekly charitable donations raise the value of Bitcoin by more
+%% than 0.6\%?  We think the answer is clearly, and resoundingly
+%% ``yes''.  Bitcoin stakeholders would be doing well while doing
+%% good.
+在2014年七月，比特币的市值已经达到了八亿美元。如果仅仅是花费比特币货币
+基数的0.05\%用于慈善事业，比特币就可以\emph{每周}捐赠一百万美元。假如
+在2014年比特币按照这个数量进行慈善捐赠，那么比特币的市值将不止上涨区区
+0.6\%。我们认为这个答案是显然是一定会。比特币持币者可以赢得尊重的同时
+获得经济收益。
 
-However, Bitcoin stakeholders are unable to undertake such an operation
-because of the difficulty of forming large binding contracts. This type
-of collective action problem is solved in Tezos.
-A protocol amendment can set up a procedure by which
-stakeholders may vote every month on a few addresses
-where 0.05\% of the monetary mass would be spent.
-The stakeholder's consensus might be to avoid dilution
-by voting on an invalid address,
-but it could also be that the money would be better spent as a charitable gift.
+%% However, Bitcoin stakeholders are unable to undertake such an
+%% operation because of the difficulty of forming large binding
+%% contracts. This type of collective action problem is solved in
+%% Tezos.  A protocol amendment can set up a procedure by which
+%% stakeholders may vote every month on a few addresses where 0.05\%
+%% of the monetary mass would be spent.  The stakeholder's consensus
+%% might be to avoid dilution by voting on an invalid address, but it
+%% could also be that the money would be better spent as a charitable
+%% gift.
+然而，比特币的使用者不能够达成一致。这个种类的共同行动问题可以被Tezos
+所解决。一个协议的修改案可以建立一个制度，让所有的持币人来进行每个月的
+投票，决定在几个地址上的 0.05\%货币总量如何被花掉。持币人的投票共识的
+内容可以是避免对某个地址进行投票，避免稀释，也可以是如何更加好的进行慈
+善捐款。
 
-\subsubsection{Funding Innovation}
+%% \subsubsection{Funding Innovation}
+\subsubsection{集资创新}
 
-Financing of innovation would also be facilitated
-by incorporating bounties directly within the protocol.
-A protocol could define unit tests and automatically award a reward
-to any code proposal that passes these tests.
+%% Financing of innovation would also be facilitated by incorporating
+%% bounties directly within the protocol.  A protocol could define
+%% unit tests and automatically award a reward to any code proposal
+%% that passes these tests.
+创新募资可以通过在协议内建立赏金机制来实现。一个协议可以定义单元测试和
+自动。
 
-Conversely, an innovator designing a new protocol
-could include a reward to himself within the protocol.
-While his protocol could be copied and the reward stripped,
-the stakeholder's consensus would likely be to reward the original creator.
-Stakeholders are playing a repeated game
-and it would be foolish to defect by refusing a reasonable reward.
+%% Conversely, an innovator designing a new protocol could include a
+%% reward to himself within the protocol.  While his protocol could be
+%% copied and the reward stripped, the stakeholder's consensus would
+%% likely be to reward the original creator.  Stakeholders are playing
+%% a repeated game and it would be foolish to defect by refusing a
+%% reasonable reward.
+相反的, 一个创新者设计了一个新的协议可以在协议里的给自己一个奖励。尽管
+他的协议可能会被复制，造成奖励被取消，但持币用户的共识很可能会是把奖励
+发给最初的创造者。持币者们将不太可能会因为拒绝一个非常合理的奖金而选择
+背叛。
 
 
-\section*{Conclusion}
+%% \section*{Conclusion}
+\section*{结论}
 
-We've presented issues with the existing cryptocurrencies
-and offered Tezos as a solution.
-While the irony of preventing the fragmentation of cryptocurrencies
-by releasing a new one does not escape us,%\cite{xkcd_standards}
-Tezos truly aims to be the \emph{last} cryptocurrency.
+%% We've presented issues with the existing cryptocurrencies and
+%% offered Tezos as a solution.  While the irony of preventing the
+%% fragmentation of cryptocurrencies by releasing a new one does not
+%% escape us,%\cite{xkcd_standards} Tezos truly aims to be the
+%% \emph{last} cryptocurrency.
+在本文，我们这里给你展示了目前加密货币所面临的问题，而Tezos则恰恰给出
+了一个好的解决方案。尽管通过发明一种新的货币的方法来阻止加密货币过度碎
+片化的方式略带讽刺意味, Tezos真正的目的是成为\emph{最后}的一种加密货币。
 
-No matter what innovations other protocols produce,
-it will be possible for Tezos stakeholders to adopt these innovations.
-Furthermore, the ability to solve collective action problems
-and easily implement protocols in OCaml will make Tezos one of the most reactive cryptocurrency.
+%% No matter what innovations other protocols produce, it will be
+%% possible for Tezos stakeholders to adopt these innovations.
+%% Furthermore, the ability to solve collective action problems and
+%% easily implement protocols in OCaml will make Tezos one of the most
+%% reactive cryptocurrency.
+不管其它的协议有任何的创新，都有可能让Tezos的持币人接受新的创新。Tezos
+解决了搭便车的问题。而方便地在OCaml上实现协议都让Tezos成为了最具有反馈
+性的加密货币之一。
 
 \bibliographystyle{unsrt}
 \bibliography{biblio}

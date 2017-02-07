@@ -467,11 +467,8 @@ PoW面临一个更加深刻的问题是很难让矿工和股东之间达成利�
 %% parties, particularly for small amounts, in order to alleviate the
 %% need to wait for confirmations. Payment processors may only need to
 %% clear with each other infrequently.
-不幸的是，我们有理由预期交易的需求会降到非常低的水平。People are
-likely to make use of off-chain transaction mechanisms via trusted
-third parties, particularly for small amounts, in order to alleviate
-the need to wait for confirmations. Payment processors may only need
-to clear with each other infrequently.
+不幸的是，我们有理由预期交易的需求会降到非常低的水平。为减少交易确认的等待时间，尤其是小金额交易，人们很可能会利用基于第三方信任的链下交易机制。
+支付处理器之间可能并不需要频繁的信誉验证。
 
 %% This scenario is not only economically likely, it seems necessary
 %% given the relatively low transaction rate supported by
@@ -480,8 +477,8 @@ to clear with each other infrequently.
 %% approach its cost, which, given modern infrastructure, should be
 %% close to zero.
 这种情况不仅仅是经济上的最好选择，也是基于比特币支持的低转账速度下不得
-已的解决办法。尽管区块链转账必须要通过链下转账，花在转账上的费用最终将
-逼近它的成本价，而现代的基础设施的飞速发展意味着这个值最终将趋近0。
+已的解决办法。区块链转账必须要和链下转账竞争，花在转账上的费用最终将
+逼近它的成本价，而现代互联网基础设施的飞速发展意味着这个值最终将趋近0。
 
 %% Attempting to impose minimum transaction fees may only exacerbate
 %% the problem and cause users to rely on off-chain transaction
@@ -546,8 +543,7 @@ ghash.io手里的系统更加安全。
 %% cost being higher than what an attacker is willing to pay, which is
 %% bound to increase with the success of the currency.
 PoW的支持者坚持其安全保障在于攻击代价比一个攻击者所愿意花费的金额要高，
-这个代价随着货币的价值的提升而不断升高。PoS减少了浪费的资源，但没有降
-低攻击的代价。它在货币升值的同时自动地让攻击的代价升高了。
+这个代价随着货币的价值的提升而不断升高。
 
 %% Proof-of-stake eliminates this source of waste without lowering the
 %% cost of attacks --- indeed, it automatically scales up the cost of
@@ -555,11 +551,9 @@ PoW的支持者坚持其安全保障在于攻击代价比一个攻击者所愿�
 %% prove to mine is not destruction of existing resources but
 %% provision of existing resources, a proof-of-stake currency does not
 %% rely on destroying massive resources as it gains in popularity.
+PoS减少了浪费的资源，但没有降低攻击的代价。它在货币升值的同时自动地让攻击的代价升高了。
 因为你要证明你挖矿的时候不是摧毁现有的资源而是证明提供现有资源，一个
-PoS货币并不会因为变得更受欢迎而消耗更多资源。Because the thing you
-must prove to mine is not destruction of existing resources but
-provision of existing resources, a proof-of-stake currency does not
-rely on destroying massive resources as it gains in popularity.
+PoS货币并不会因为变得更受欢迎而消耗更多资源。
 
 %% \subsubsection{Control}
 \subsubsection{控制}
@@ -604,14 +598,13 @@ rely on destroying massive resources as it gains in popularity.
 %% A downside of a Turing complete scripting language for the
 %% contracts is that the number of steps needed to execute a script is
 %% potentially unbounded, a property which is generally uncomputable.
-图灵完备的一个会坏处，那就是潜在需要的步骤是无限制的。
+图灵完备的一个会坏处，那就是潜在需要的步骤是无限制的，这个属性一般是不能检测的。
 
 %% To address this problem, Ethereum has devised a system by which the miner
 %% validating the transaction requires a fee proportional to the complexity
 %% and number of steps needed to execute the contract.
-To address this problem, Ethereum has devised a system by which the miner
-validating the transaction requires a fee proportional to the complexity
-and number of steps needed to execute the contract.
+为解决这个问题，以太坊提出在验证每笔交易时需要支付一定的费用，
+这个费用与执行合约的复杂性和步骤数量成比例。
 
 %% Yet, for the blockchain to be secure, \emph{all} the active nodes
 %% need to validate the transaction. A malicious miner could include

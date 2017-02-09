@@ -5,8 +5,10 @@
 \usepackage[utf8x]{inputenc}
 
 \author{L.M Goodman}
-\date{September 2, 2014}
-\title{Tezos --- a self-amending crypto-ledger \\ White paper}
+%% \date{September 2, 2014}
+\date{2014年9月2日}
+%% \title{Tezos --- a self-amending crypto-ledger \\ White paper}
+\title{Tezos --- 自我进化的加密账本 \\ 白皮书}
 %\usepackage[utf8]{inputenc}
 %%\setlength{\parskip}{\baselineskip}
 \usepackage{amsfonts}
@@ -37,8 +39,9 @@
 
 \maketitle
 
-\epigraph{\emph{``Our argument is not flatly circular,
-but something like it.''}}
+%% \epigraph{\emph{``Our argument is not flatly circular,
+%% but something like it.''}}
+\epigraph{\emph{``我们的论点并不是简单的循环逻辑，其背后有着独到之处。''}}
 {--- \textup{Willard van Orman Quine}}
 
 
@@ -49,8 +52,8 @@ but something like it.''}}
 %% responsible for network operations. Bitcoin, Ethereum, Cryptonote, etc. can all
 %% be represented within Tezos by implementing the proper interface to the network
 %% layer.
-本白皮书向您介绍Tezos, 一个可以通用的且能够自我修正的加密数字账本。
-Tezos的最大特点是可以吸收任何一种基于区块链的账本好的方面。 
+本白皮书向您介绍Tezos, 一个可以通用的且能够自我进化的加密数字账本。
+Tezos的最大特点是可以吸收任何一种基于区块链的账本好的方面。
 在Tezos上，一个常规的区块链上的各种操作被实现为单纯的功能模。网络壳（Shell）吸收这些操作处理网络层任务。
 比特币，以太坊，Cryptonote等等都可以在Tezos内通过网络层接口实现，进而被表征。
 
@@ -88,7 +91,7 @@ Tezos的最大特点是可以吸收任何一种基于区块链的账本好的方
 
 在白皮书的第一部分，我们将讨论抽象区块链的概念以及自动修正的加密账本的实现。在第二部分，我们将具体展开描述我们提出的种子协议。
 
-\section{自动修正的加密数字账本}
+\section{自动进化的加密数字账本}
 
 一个区块链协议包含三层不同的协议:
 \begin{itemize}
@@ -113,7 +116,7 @@ Tezos实现了一个一般性的Shell。该Shell是对交易协议和共识协�
 %% operators acting on this global state. The free monoid of blocks acting on the
 %% genesis state forms a tree structure. A global, canonical, state is defined as
 %% the minimal leaf for a specified ordering.
-一个区块链的协议本质上是一个全局状态并发突变的单子(monadic )的实现，以区块为单位操作全局状态。区块的自由类群(free monid)从创始状态开始形成一个树状结构。一个全局标准状态就是这个树的满足一定顺序的最小叶。
+一个区块链的协议本质上是一个全局状态并发突变的单子(monadic)的实现，以区块为单位操作全局状态。区块的自由类群(free monid)从创始状态开始形成一个树状结构。一个全局标准状态就是这个树的满足一定顺序的最小叶。
 
 %% This suggests the following abstract representation:
 以下是其抽象的表达:
@@ -153,7 +156,7 @@ $$\left(\mathbf{S},\leq,\oslash,
 %% given the incentives for block creation.
 这些区块链的网络层协议基本相同。其挖矿算法却发展迅速，激励着区块的创建。
 
-%% In Tezos, we make a blockchain protocol introspective 
+%% In Tezos, we make a blockchain protocol introspective
 %% by letting blocks act on the protocol itself.
 %% We can then express the set of protocols recursively as
 %% $$\mathcal{P} = \left\{\left(\mathbf{S},\leq,\oslash,\mathbf{B} \subset
@@ -306,13 +309,13 @@ end
 %% function. List of bytes are ordered first by length, then by
 %% lexicographic order. This is a fairly generic structure, similar to the one used
 %% in software versioning, which is quite versatile in representing various
-%% orderings. 
+%% orderings.
 不是和数学模型做状态比对，相反，我们利用\textbf{score}函数将\textbf{Context}对象映射到一个字节列表。字节列表首先按长度排列，其次依照字母顺序。类似于软件的版本化，这是一个相当通用的结构，在表示不同排序时有着广泛应用。
 
 %% Why not define a comparison function within the protocol modules? First off it
 %% would be hard to enforce the requirement that such a function represent a
 %% \emph{total} order. The score projection always verifies this (ties can be
-%% broken based on the hash of the last block). Second, in principle we need 
+%% broken based on the hash of the last block). Second, in principle we need
 %% the ability to compare states across distinct protocols. Specific protocol
 %% amendment rules are likely to make this extremely unlikely to ever happen,
 %% but the network shell does not know that.
@@ -409,7 +412,7 @@ type service = {
 
 %% The name is a list of string to allow namespaces in the procedures. Input and
 %% output are optionally described by a json schema.
-这个名字是一个字符串列表，其目的是允许过程中出现命名空间。输入和输出是通过可选择性使用json模式刻画。
+这个名字是一个字符串列表，其目的是允许过程中出现命名空间。输入和输出是通过可选择性使用json 模式刻画。
 
 %% Note that the call is made on a given context which is typically a recent ancestor
 %% of the highest scoring leaf. For instance, querying the context six blocks above
@@ -486,7 +489,7 @@ Tezos一开始就会有一百亿个币，这些币小数点后保留两位。一
 
 %% Note that the period of a year is determined from the block's timestamps, not
 %% from the number of blocks. This is to remove uncertainty as to the length of
-%% the commitment made by miners. 
+%% the commitment made by miners.
 请注意这里的一年周期是根据区块的时间戳而不是区块的数量决定的，这是为了抵消矿工挖矿算力不同导致的不确定性。
 
 \paragraph{展望}
@@ -556,7 +559,7 @@ $$Q \leftarrow 0.8 Q + 0.2 q.$$
 持币者将进行第二次投票来确认他们确实想要支持测试协议替代主协议。这也要求一定的法定人数，以及$80\%$的绝大多数投票者支持。
 
 %% We deliberately chose a conservative approach to amendments. However,
-%% stakeholders are free to adopt amendments loosening or tightening this policy 
+%% stakeholders are free to adopt amendments loosening or tightening this policy
 %% should they deem it beneficial
 我们特地选择了一个保守的方法做出修改决定。但是投票人可以自由地去选择自己认为对有利的修改提议，并来对这个修改案进行适度的放松或者收紧。
 
@@ -571,7 +574,7 @@ $$Q \leftarrow 0.8 Q + 0.2 q.$$
 我们的POS机制集成了几个不同的观念，其中包括Slasher\cite{Slasher}，chain-of-activity\cite{CoA}以及proof-of-burn。以下的是对算法的简要概览。算法组件将在以下被详细地介绍。
 
 %% Each block is mined by a random stakeholder (the miner) and includes
-%% multiple signatures of the previous block provided by random 
+%% multiple signatures of the previous block provided by random
 %% stakeholders (the signers). Mining and signing both offer a small reward but
 %% also require making a one year safety deposit to be
 %% forfeited in the event of a double mining or double signing.
@@ -605,7 +608,7 @@ $$Q \leftarrow 0.8 Q + 0.2 q.$$
 最高优先级的持币人很可能会在上一个块出现后一分钟后挖出下一个。优先级第二的持币者可能在两分钟后挖到下一个块，以此类推，优先级第三的会在三分钟后挖到下一个块。
 
 %% This guarantees that a fork where only a small fraction of stakeholder
-%% contribute will exhibit a low rate of block creation. If this weren't 
+%% contribute will exhibit a low rate of block creation. If this weren't
 %% the case, a CPU denial of service attacks would be possible by
 %% tricking nodes into verifying a very long chain claimed to have a very high
 %% score.
@@ -616,7 +619,7 @@ $$Q \leftarrow 0.8 Q + 0.2 q.$$
 %% Every block mined carries a hash commitment to a random number chosen by the
 %% miner. These numbers must be revealed in the next cycle under penalty of
 %% forfeiting the safety bond. This harsh penalty is meant to prevent selective
-%% whitholding of the numbers which could be sued to attack the entropy of the seed. 
+%% whitholding of the numbers which could be sued to attack the entropy of the seed.
 每一个被挖的块都会携带一个由矿工选择的随机数的哈希值。这些数字必须在下一个周期的担保金没收时间前被公开。
 这个严厉的惩罚措施可以防止因矿工拒不提供随机数而有可能导致的对种子进行的熵攻击。
 
@@ -681,7 +684,7 @@ LIFO队列优先级保证了在一个秘密分叉上挖矿的攻击者无法通�
 %% in efficiency over the follow-the-satoshi approach.
 这样做会有一个很小的问题，那就是股份数被近似为卷值最接近的整数。但是相对于follow-the-satoshi方法，该方法在效率方面提供了很大的改善。
 
-%% While the rolls are numbered, this approach does not preclude the use of 
+%% While the rolls are numbered, this approach does not preclude the use of
 %% fungibility preserving protocols like Zerocash. Such protocols can use
 %% the same ``limbo'' queue technique.
 虽然币卷被数字化，这个方法并不能阻碍那些诸如零币那样的使用可替代性保持的协议。这些协议可以使用相同的limbo队列技术。
@@ -696,26 +699,26 @@ LIFO队列优先级保证了在一个秘密分叉上挖矿的攻击者无法通�
 %% appropriate addresses ahead of time. This is much harder to achieve if rolls
 %% are randomly selected, as the secretive fork cannot fake ownership of certain
 %% rolls and must thus try to preimage the hash function applied to the seed to
-%% assign itself signing and minting rights. 
+%% assign itself signing and minting rights.
 事实上，在一个秘密的分叉内，一个矿工可以试图通过提前控制随机种子的生成和赋予自身签名和挖币的权利。
 如果币卷是真正随机选择的，这种企图是很难成功，因为秘密的分叉不能够伪造某个币卷的所有权归属，
-而且必须要试图来造影 (preimage)在种子上应用的哈希函数，进而实现签名和造币权利的分配。
+而且必须要试图来造影（preimage）在种子上应用的哈希函数，进而实现签名和造币权利的分配。
 
-Indeed, in a cycle of length $N=\num{2048}$, someone holding a fraction $f$ of
-the rolls will receive on average $f N$ mining rights, and the effective
-fraction received, $f_0$ will have a standard deviation of
-$$\sqrt{\frac{1}{N}}\sqrt{\frac{1-f}{f}}.$$
+%% Indeed, in a cycle of length $N=\num{2048}$, someone holding a fraction $f$ of
+%% the rolls will receive on average $f N$ mining rights, and the effective
+%% fraction received, $f_0$ will have a standard deviation of
+%% $$\sqrt{\frac{1}{N}}\sqrt{\frac{1-f}{f}}.$$
 事实上，在一个$N=\num{2048}$周期内，某个持有币卷中一小部分$f$的人将会获得平均值为$f N$的挖矿权，
-一旦接收到这个有效的部分，那么$f_0$的标准差将为$$\sqrt{\frac{1}{N}}\sqrt{\frac{1-f}{f}}$$。
+一旦接收到这个有效的部分，那么$f_0$的标准差将为：$$\sqrt{\frac{1}{N}}\sqrt{\frac{1-f}{f}}$$
 
-If an attacker can perform a brute-force search through $W$ different seeds,
-then his expected advantage is at most\footnote{this is a standard bound
-on the expectation of the maximum of W normally distributed variable}
-$$\left(\sqrt{\frac{2\log(W)}{N}}\sqrt{\frac{1-f}{f}}\right)fN$$
-blocks. For instance, an attacker controlling $f = 10\%$ of the rolls should
-expect  to mine about $205$ blocks per cycle. In a secret fork where he attempts
-to control the seed, assuming he computed over a trillion hashes, he could
-assign itself about $302$ blocks, or about $14.7\%$ of the blocks. Note that:
+%% If an attacker can perform a brute-force search through $W$ different seeds,
+%% then his expected advantage is at most\footnote{this is a standard bound
+%% on the expectation of the maximum of W normally distributed variable}
+%% $$\left(\sqrt{\frac{2\log(W)}{N}}\sqrt{\frac{1-f}{f}}\right)fN$$
+%% blocks. For instance, an attacker controlling $f = 10\%$ of the rolls should
+%% expect  to mine about $205$ blocks per cycle. In a secret fork where he attempts
+%% to control the seed, assuming he computed over a trillion hashes, he could
+%% assign itself about $302$ blocks, or about $14.7\%$ of the blocks. Note that:
 如果一个攻击者通过$W$个不同种子进行穷举式搜索，那么他的攻击的优势至多是$$\left(\sqrt{\frac{2\log(W)}{N}}\sqrt{\frac{1-f}{f}}\right)fN$$个区块。
 \footnote{这是在W正态分布变量的最大期望上的标准界限。}
 举个例子，一个控制了总量$f = 10\%$币卷的攻击者，他可以预期在每个周期挖大约$205$个区块。
@@ -727,19 +730,19 @@ assign itself about $302$ blocks, or about $14.7\%$ of the blocks. Note that:
 \item[-] %% To make linear gains in blocks mined, the attacked needs to expend a
 %% quadratically exponential effort.
 要想在挖矿中取得线性收益，攻击者将花费平方指数级增长的资源。
-\end{itemize}  
+\end{itemize}
 
 \subsubsection{挖矿}
 %% The random seed is used to repeatedly select a roll. The first roll selected
 %% allows its stakeholder to mine a block after one minute, the second one after
-%% two minutes --- and so on. 
+%% two minutes --- and so on.
 随机种子被重复用来选择币卷。第一个被选中的卷将给予它的持有者一分钟后挖块的权利，这个第二个可以在两分钟以后，以此类推。
 
 %% When a stakeholder observes the seed and realizes he can mint a high priority
 %% block in the next cycle, he can make a security deposit.
 当一个持币者观察到种子并认识到他可以在下一个周期里挖掘一个高优先级的块的时候，他可以进行安全存币。
 
-%% To avoid a potentially problematic situation were no stakeholder made a 
+%% To avoid a potentially problematic situation were no stakeholder made a
 %% safety deposit to mine a particular block, after a 16 minutes delay, the
 %% block may be mined without a deposit.
 存在这样一个潜在问题，即没有持有人进行安全存币购买债券来挖一个特定的块。如果这种情况发生，那么在16分钟以后，这个块就可以在没有存款的情况下被挖出。
@@ -755,7 +758,7 @@ assign itself about $302$ blocks, or about $14.7\%$ of the blocks. Note that:
 就这样我们构建了一个几乎完备可行的POS系统。但是一个问题是将一个链的权重定义为区块数量，这会带来自私挖矿的问题。
 
 %% We thus introduce a signing scheme. While a block is being minted, the random
-%% seed is used to randomly assign 16 signing rights to 16 rolls. 
+%% seed is used to randomly assign 16 signing rights to 16 rolls.
 为此，我们引入了一个签名模式。当一个区块被挖出的时候，随机种子将随机分配16个签名权利给16个币卷。
 
 %% The stakeholders who received signing rights observe the blocks being minted and
@@ -814,8 +817,8 @@ assign itself about $302$ blocks, or about $14.7\%$ of the blocks. Note that:
 %% denouncing malfeasances, but it's not particularly clear this carries much
 %% benefit.}
 尽管我们可以允许任何人来谴责不良行为，但没有人比矿工更适合来这样做。
-事实上，一个矿工可以简单地复制不良行为的证据并将其作为自己的发现转达给其他人。
-\footnote{零知识证明允许任何人从谴责不良行为获益，但获益多少并不十分明确。}
+事实上，一个矿工可以简单地复制不良行为的证据并将其作为自己的发现转达给其他人\footnote{零知识证明允许任何人从谴责不良行为获益，但获益多少并不十分明确。}。
+
 
 %% Once a party has been found guilty of double minting or double signing,
 %% the safety bond is forfeited.
@@ -831,12 +834,12 @@ assign itself about $302$ blocks, or about $14.7\%$ of the blocks. Note that:
 和比特币的unspent输出不同，Tezos使用有状态的账户。当这些账户规定了可被执行的代码时，它们也就成了广泛意义上的合约。
 账本本身也是一种合约，只是没有可执行的代码。
 
-%% Each contract has a ``manager", which in the case of an account is 
+%% Each contract has a ``manager", which in the case of an account is
 %% simply the owner. If the contract is flagged as spendable, the manager
 %% may spend the funds associated with the contract. In addition, each
-%% contract may specify the hash of a public key used to sign or 
+%% contract may specify the hash of a public key used to sign or
 %% mine blocks in the proof-of-stake protocol. The private key may or
-%% may not be controlled by the manager. 
+%% may not be controlled by the manager.
 每一个合约都有一个管理者，对于账户而言，这个管理者就是它的拥有者。如果这个合约标识为可以被花费的，那也意味着管理者可以花费与这个合约相关联的资金。
 此外，每一个合约都可能会规定一个公钥的哈希用来签署或者挖POS协议内的区块。私钥可由或不由管理者控制。
 
@@ -861,7 +864,7 @@ type contract = {
 %% is an invalid operation and cannot be included in a valid block.
 一个合约的句柄是初始内容的哈希值。试图创建的合约的哈希不能与已经存在的相同，否则将不会被包含在一个有效区块内。
 
-Note that data is represented as the union type.
+%% Note that data is represented as the union type.
 该数据表示为一个union类型。
 
 \begin{lstlisting}
@@ -937,9 +940,9 @@ type transaction = {
 %% for each byte increase in the storage. For instance, if after the execution of
 %% a transaction, an integer has been added to the storage and ten characters have
 %% been appended to an existing string in the storage, then \tz~18 will be withdrawn
-%% from the contract's balance and destroyed. 
+%% from the contract's balance and destroyed.
 存储是网络上最重要的成本之一，在存储上每增加一个字节大约最低的费用为\tz~1。
-例如，如果交易执行后，一个integer被添加到存储中，并且在已经存在的存储的字符串上增加10个字节，那么\tz~18将从合约的余额中取出和销毁。
+例如，如果交易执行后，一个整数被添加到存储中，并且在已经存在的存储的字符串上增加10个字节，那么\tz~18将从合约的余额中取出和销毁。
 
 
 \subsubsection{代码}
@@ -972,7 +975,7 @@ type transaction = {
 %% amendable, this cap can be changed in the future, or advanced primitives can be
 %% introduced as new opcodes.
 如果该帽子对一些程序而言被证明是紧上界，他们可以在多个执行步骤上中断并采取多个交易完全执行的方式。
-正是因为Tezos是自我修改的，这个帽子在未来可以改变，或者引入更多的高级原语。
+正是因为Tezos是自我进化的，这个帽子在未来可以改变，或者引入更多的高级原语。
 
 %% If the account permits, the signature key may be changed by issuing a signed
 %% message requesting the change.

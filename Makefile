@@ -11,4 +11,4 @@ default: white_paper.pdf position_paper.pdf
 	done
 
 clean:
-	rm -f *.log *.aux *.pdf rm *.toc
+	rm -f *.log *.aux *.pdf rm *.toc *.out

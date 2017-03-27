@@ -45,7 +45,7 @@ Bitcoin Wiki.
 \bibitem{centralized}
 Gaving Andresen.
 \newblock Centralized mining.
-\newblock {\url{https://bitcoinfoundation.org/2014/06/13/centralized-mining/}},
+\newblock {\url{http://bitcoinfoundation.org/centralized-mining/}},
   2014.
 
 \bibitem{btccommons}
@@ -68,7 +68,7 @@ Simon de~la Rouviere.
 Debian project.
 \newblock Computer language benchmarks game.
 \newblock
-  {\url{http://benchmarksgame.alioth.debian.org/u32/benchmark.php?test=all&lang=all&data=u32}},
+  {\url{http://benchmarksgame.alioth.debian.org/u32/index.html}},
   2014.
 
 \bibitem{semantic}
@@ -93,6 +93,6 @@ Vitalik Buterin.
 \bibitem{Futarchy}
 Robin Hanson.
 \newblock Shall we vote on values, but bet on beliefs?
-\newblock {\url{http://hanson.gmu.edu/futarchy3.pdf}}, 2013.
+\newblock {\url{http://mason.gmu.edu/~rhanson/futarchy2013.pdf}}, 2013.
 
 \end{thebibliography}

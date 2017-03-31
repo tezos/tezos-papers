@@ -142,7 +142,7 @@ OCaml语言来实现这个程序的原因。
 %% the ability to play music, check email, message his friends, and
 %% conduct phone calls.
 为了更好的展示这个问题，让我们来比较一个加密货币和智能手机。当我们购买
-一部只能手机的时候，消费者购买的某些特性，例如播放音乐，查阅邮件的能力，
+一部智能手机的时候，消费者购买的某些特性，例如播放音乐，查阅邮件的能力，
 和朋友互发短信的能力，以及打电话的能力。
 
 %% Every few weeks, a newer smartphone model is released on the market
@@ -591,14 +591,14 @@ PoS货币并不会因为变得更受欢迎而消耗更多资源。
 %% amount and the parameters passed to the contract code.
 尽管重点是在语言的图灵完备性能，第二个特性是到目前为止最有意思的和强大
 的。在比特币系统里，一个output可以被认为是只有两种状态：花掉和没有被花
-掉在以太坊，账户（被钥匙所保护）有一个余额，一个合同代码，和一个数据存
+掉。在以太坊，账户（被钥匙所保护）有一个余额，一个合同代码，和一个数据存
 储。这个账户的存储状态可以被改变为让一个交易导向这个账户。这个交易详细
 规定了被导向合同代码的一个数量和参数。
 
 %% A downside of a Turing complete scripting language for the
 %% contracts is that the number of steps needed to execute a script is
 %% potentially unbounded, a property which is generally uncomputable.
-图灵完备的一个会坏处，那就是潜在需要的步骤是无限制的，这个属性一般是不能检测的。
+图灵完备的一个坏处，那就是潜在需要的步骤是无限制的，这个属性一般是不能检测的。
 
 %% To address this problem, Ethereum has devised a system by which the miner
 %% validating the transaction requires a fee proportional to the complexity
@@ -636,7 +636,7 @@ PoS货币并不会因为变得更受欢迎而消耗更多资源。
 %% need develops.
 我们的解决方案是对最大步数加一个限制。因为区块有一个大小的限制，转账的
 数量也因此被限制，所以也有一个针对每个区块运算步数的上限。这个限制让针
-对CPU使用的DOS攻击变得无效。同时，有效的用户可以发行多个交易来计算，比
+对CPU使用的DOS攻击变得无效。同时，有效的用户可以发行多个交易来计算，这将比
 单个交易允许的更多的步骤数。Miners或许可以决定忽略太长的执行，如果他们
 觉得被包含的费用过于低。因为Tezos的协议可以被修改，这个上限可以在未来
 被提升，而随着需求的产生，新的加密算法也可以被添加到scripting语言。
@@ -1040,7 +1040,7 @@ stake问题。
 足够的能力在几个月的时间内针对一个单独的哈希形成一个共识。这个哈希可以
 在全球主要的报纸上发表，刻在餐桌上，喷涂在桥上，以及被编程在歌曲里，被
 标记在新的水泥平面上，纹在你的宠物雪貂身上, 有数不清的方式可以来记录这
-个制衡点，让作假变得不可能。而且，它可以在几分钟内形成共识并再一个中心
+个制衡点，让作假变得不可能。而且，它可以在几分钟内形成共识并在一个中心
 化的系统内获得更加安全的实现。
 
 %% \subsubsection{Statistical Detection}
@@ -1108,8 +1108,8 @@ stake问题。
 %% place.
 这里我们引入来一个创新的观点，就是对双重签名者的惩戒。如果对一个交易的
 签名延迟，这个交易可以被任何的双花企图被侦测到的时候被撤回。这足以防止
-一个自私的用户为了获得这个分支成功所带来的收益而机会主义地区试图签署一
-个分支加。然而，一旦一个奖励被支付，这个动机也就不复存在了。因此我们使
+一个自私的用户为了获得这个分支成功所带来的收益而机会主义地试图签署一
+个分支。然而，一旦一个奖励被支付，这个动机也就不复存在了。因此我们使
 用一个延迟的方法来让TAPOS变得在统计学意义上有效，或者为了让审查点变得
 更加有效。
 
@@ -1195,7 +1195,7 @@ stake问题。
 %% addresses involved in obfuscating the transaction.
 Crypto Note建造了一个协议，使用环形签名来保证隐私。用户可以能够在花币
 的同时不暴露$N$个地址中的那个花了这些币的地址。双花者将会暴露，而转账
-也被证实为无效这个和Coin-join相类似，而\emph{不需要}地址之间的合作。
+也被证实为无效。这个和Coin-join相类似，而\emph{不需要}地址之间的合作。
 
 %% One of the main advantage of ring signatures is that they are
 %% comparatively simpler to implement than NIZKPK and rely on more
@@ -1297,7 +1297,7 @@ Robin Hanson曾经倡议我们对价值进行投票来决定我们的信仰\cite
 %% than 0.6\%?  We think the answer is clearly, and resoundingly
 %% ``yes''.  Bitcoin stakeholders would be doing well while doing
 %% good.
-在2014年七月，比特币的市值已经达到了八亿美元。如果仅仅是花费比特币货币
+在2014年七月，比特币的市值已经达到了八十亿美元。如果仅仅是花费比特币货币
 基数的0.05\%用于慈善事业，比特币就可以\emph{每周}捐赠一百万美元。假如
 在2014年比特币按照这个数量进行慈善捐赠，那么比特币的市值将不止上涨区区
 0.6\%。我们认为这个答案是显然是一定会。比特币持币者可以赢得尊重的同时

@@ -2,7 +2,7 @@
 
 NUMBUILDS=2
 
-default: white_paper.pdf position_paper.pdf
+default: white_paper.pdf position_paper.pdf white_paper_zh.pdf position_paper_zh.pdf
 
 link_zh:
 	ln -sf position_paper.bbl position_paper_zh.bbl

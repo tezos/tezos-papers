@@ -43,11 +43,10 @@
 %% succeed them.  We aim to remedy the potential for atrophied
 %% evolution in the crypto-currency space by presenting Tezos, a
 %% generic and self-amending crypto-ledger.
-随着一个去中心化的加密货币比特币的流行，效仿者，也就是所谓的竞争货币，
-纷纷出现。包括以太坊，CryptoNote,以及零币在内的加密货币都对加密货币空
-间做出了独特的贡献。尽管很多替代货币有着自己的创新，但是由于彼此孤立，
-没有办法来接纳其它货币的创新来让自己变得更加成功。我们希望通过Tezos，
-一个一般性的具有自我修正性的加密账本，来改善这种无意义的消耗和浪费。
+随着比特币的普适化，市场开始出现一些去中心化的加密货币，也称竞争币。
+其中具备代表性的有以太坊，CryptoNote,以及零币，这些都对加密货币领域内做出了独特的贡献。尽管很多替代货币有着自己的创新，但是由于彼此孤立，
+没有办法来接纳其它货币的创新来让自己变得更加成功。我们希望通过设计和实现Tezos，
+一个普适的且能够自我进化的加密账本，来补救这种无意义的消耗和浪费。
 
 %% Tezos can instanciate any blockchain based protocol. Its seed
 %% protocol specifies a procedure for stakeholders to approve
@@ -55,22 +54,20 @@
 %% amendment procedure itself.  Upgrades to Tezos are staged through a
 %% testing environment to allow stakeholders to recall potentially
 %% problematic amendments.
-Tezos可以吸纳任何一个一个基于区块链的协议。它将这些协议变成一个子协议,
-并规定一个流程来让持币者来对协议的改变进行审核和批准，\emph{包括}对协
-议改变的改变。对于Tezos而言，升级将在一个实验性环境来进行，这让持币者
-可以对潜在的问题修改进行撤销。
+Tezos可以实例化任何一个区块链协议。其种子协议规定了一个流程，该流程支持让持币者决定针对协议改进的审批，\emph{包括}对改进过程自身的改进。
+针对Tezos的升级在测试环境下筹划，允许持币者撤销潜在的可能出现问题的修正。
 
 %% The philosophy of Tezos is inspired by Peter Suber's
 %% Nomic\cite{Nomic}, a game built around a fully introspective set of
 %% rules.
-这个Tezos的特性收到了Peter Suber’s Nomic\cite{Nomic}的启发。这是一个建
-立在具有内省性规则之上的游戏。
+Tezos的哲学由Peter Suber’s Nomic\cite{Nomic}启发，这是一个完全建
+立在内省性规则集合之上的游戏。
 
 %% In this paper, we hope to elucidate the potential benefits of
 %% Tezos, our choice to implement as a proof-of-stake system, and our
 %% choice to write it in OCaml.
-在本论文里，我们希望能够展示Tezos的潜在优势，我们选择股权证明机制以及
-OCaml语言来实现这个程序的原因。
+在本文内，我们希望阐述Tezos的潜在优势，以及选择股权证明机制实现共识协议和
+OCaml语言编码的原因。
 
 
 \end{abstract}
@@ -86,24 +83,24 @@ OCaml语言来实现这个程序的原因。
 \begin{itemize}
 %% \item[-] The ``hard fork'' problem, or the inability for Bitcoin to
 %% dynamically innovate due to coordination issues.
-\item[-] ``硬分叉''问题，也就是比特币因为协调而产生的不能够及时创新的
+\item[-] ``硬分叉''问题，也就是比特币因为协调问题而产生的不能够动态创新的
   问题。
 %% \item[-] Cost and centralization issues raised by Bitcoin's
 %% proof-of-work system.
 \item[-] 成本和中心化问题，导致这个问题的主要原因是比特币的工作证明机制。
 %% \item[-] The limited expressiveness of Bitcoin's transaction
 %% language, which has pushed smart contracts onto other chains.
-\item[-] 比特币的有限表达问题，这让智能合约的机遇被竞争者抢得先机。
+\item[-] 比特币交易语言的有限表达问题，致使智能合约出现在其他竞争链上。
 %% \item[-] Security concerns regarding the implementation of a
 %% crypto-currency.
-\item[-] 加密货币实现过程中的安全问题。
+\item[-] 关于加密货币实现的安全隐患。
 \end{itemize}
 
 %% \subsection{The Protocol Fork Problem}
-\subsection{协议的分叉问题}
+\subsection{协议分叉问题}
 
 %% \subsubsection{Keeping Up With Innovation}
-\subsubsection{保证创新}
+\subsubsection{持续创新}
 %% In the wake of Bitcoin's success, many developers and entrepreneurs
 %% have released alternative crypto-currencies (``altcoins''). While
 %% some of these altcoins did not diverge dramatically from Bitcoin's
@@ -116,13 +113,12 @@ OCaml语言来实现这个程序的原因。
 %% include privacy-preserving ring signatures
 %% (CryptoNote)\cite{CryptoNote} and untraceable transactions using
 %% SNARK (Zerocash)\cite{Zerocash}.
-为了让比特币保持创新，很多的开发者和企业家开发了很多的竞争加密货币（所
-  谓的山寨币）尽管很多加密货币只是对比特币的原始代码的简单模仿，但其中
+为了让比特币持续化创新，很多的开发者和企业家开发了很多的竞争加密货币（所
+  谓的山寨币）。尽管很多加密货币只是对比特币的原始代码的简单模仿\footnote{喔，非原创}，但其中
 不乏一些有所针对地做了一些有意义的改善。例如，莱特币引进了高内存要求的
-工作证明机制，以及更短的区块确认时间。与之相类似的，以太坊被设计成一个
-状态合约和图灵完备的转账语言\cite{Ethereum}。其它的创新包括为保存隐私
-而被发明出来的环形签名(CryptoNote)\cite{CryptoNote}以及零币采用的转账
-不可被追踪的SNARK(ZeroCash)\cite{Zerocash}机制。
+工作证明机制\footnote{scrypt mining ASICs已经可用}，以及更短的区块确认时间。类似的，以太坊具有有
+状态的合约和图灵完备的交易语言\cite{Ethereum}。其它的创新包括为隐私隐藏环签名(CryptoNote)\cite{CryptoNote}以及
+使用SNARK(ZeroCash)\cite{Zerocash}实现的不可追踪交易。
 
 %% The rise of altcoins has inspired a vast competition in software
 %% innovation.  Cheerleaders for this Hayekian growth, however, miss a
@@ -130,10 +126,9 @@ OCaml语言来实现这个程序的原因。
 %% money, it needs to be a stable store of value. Innovation within a
 %% ledger preserves value through protecting the network effect giving
 %% the currency its value.
-这些山寨币的崛起鼓舞了后来者做出更多创新。很多哈耶克式增长的支持者们忽
-略了一个重要的问题，那就是对于一个加密货币，要想成为真正但货币，必须首
-先成为一个稳定的价值存储工具。这需要在数字账本内进行的技术创新保护系统
-的网络效应从而让其货币的价值更加稳固。
+这些山寨币的崛起促使在软件创新上的更加激烈的竞争。但很多哈耶克式增长的支持者们忽
+略了一个重要的问题，那就是加密货币要想成为货币的一种有效形式，那么它必须首
+先成为一个稳定的价值存储工具。账本内的创新通过保护和强化基础设施网络，从而为该货币赋予和保存价值。
 
 
 %% To illustrate the problem of many competing altcoins, let us
@@ -142,7 +137,7 @@ OCaml语言来实现这个程序的原因。
 %% the ability to play music, check email, message his friends, and
 %% conduct phone calls.
 为了更好的展示这个问题，让我们来比较一个加密货币和智能手机。当我们购买
-一部智能手机的时候，消费者购买的某些特性，例如播放音乐，查阅邮件的能力，
+一部智能手机的时候，消费者支付的是手机的某些特性功能，例如播放音乐，查阅邮件的能力，
 和朋友互发短信的能力，以及打电话的能力。
 
 %% Every few weeks, a newer smartphone model is released on the market
@@ -150,15 +145,15 @@ OCaml语言来实现这个程序的原因。
 %% the older model may be jealous of those with the latest model, the
 %% introduction of newer smartphones does not render older smartphones
 %% dysfunctional.
-几周以后又一款新的智能手机上市了，往往带有新的功能。尽管老手机型号的消
-费者或者会希望得到这些新的型号，新型号的手机并不会让老手机变得失效。
+几周以后又一款新的智能手机上市了，往往带有更新更强的功能。尽管老型号手机用户会希望得到这些新型号，
+但新型号的手机并不会让老手机不能使用。
 
 %% This dynamic would change, however, if the newest phones could not
 %% communicate with older models. If the many models and styles of
 %% smartphone could not be used together seamlessly, the value of each
 %% smartphone would be reduced to the number of people with the same
 %% model.
-如果新的手机变得不能够和老型号手机互通，那么这种关系就会改变，那款新手
+如果新的手机变得不能够和老型号手机无缝通信，不能够做到向下兼容，那么这种关系就会改变。每款型号手
 机的价值就仅限于使用该型号手机的人群。
 
 %% Crypto-currencies suffer from the same fate as smartphones which
@@ -170,17 +165,10 @@ OCaml语言来实现这个程序的原因。
 %% currency. If smartphones were incompatible with older models, there
 %% would be either very little innovation or extremely disruptive
 %% innovation forcing older phones into obsolescence.
-加密货币面临的问题就像不能兼容其它型号的智能手机。它们的价值在于其网络
-价值，或者说用户数量，这是给它们价值的最重要因素。为了实现这个目的，在
-一个新的创新货币，要么因为不能够建立足够的网络效应而失败，要么获得成功，
-但却损害其它加密货币的价值。如果一款智能手机不能和旧款兼容，那么用户会
-有如下几种反应：
+加密货币存在和智能手机兼容性类似的问题。其价值来源于底层网络，或者赋予货币价值的用户数量。
+从这点上说，一个新的创新货币要么因为不能够建立强大的网络而失败，要么以损害原有加密货币价值为代价获得成功。如果一款智能手机不能和旧款兼容，
+那么该手机可能没有任何创新，也可能具备颠覆性的创新，强制旧版本过时。
 
-\begin{enumerate}
-\item 哇，一点原创都没有。
-\item Scrypt矿机(莱特币矿机)被研制出来了
-\item 或者没有创新或者极度创新，以至于让老型号变得过时。
-\end{enumerate}
 
 %% Side-chains are an attempt to allow innovations which will retain
 %% compatibility with Bitcoin by pegging the value of a new currency
@@ -188,9 +176,9 @@ OCaml语言来实现这个程序的原因。
 %% it's unclear whether they will be flexible enough to accommodate
 %% protocols substantially different fro Bitcoin. The only alternative
 %% so far is to fork the protocol.
-侧链是一个让新货币的价值和比特币进行锚定实现两者之间的互换的尝试。不幸
+侧链是一个让新货币的价值和比特币进行锚定实现两者之间的互换的尝试，其保证了侧链与比特币之间的兼容性。不幸
 的是，这样的关系不确定能有足够的灵活性来满足那些和比特币非常不同的货币。
-唯一的替代方案就是对协议进行分叉。
+迄今唯一的替代方案就是对协议进行分叉。
 
 %% \subsubsection{Economics of Forks}
 \subsubsection{分叉经济学}
@@ -206,9 +194,8 @@ OCaml语言来实现这个程序的原因。
 %% ledger, Bitcoin is a series of 1s and 0s. The choice to treat the
 %% amounts encoded within unspent outputs as balances is a purely
 %% \emph{social} consensus, not a property of the protocol itself.
-要理解分叉经济学，一定要首先理解货币的价值首先是一个社会共识。很容易认
-为加密货币是它的规则和账本，其实它们的价值源自它们被广泛接受为货币。尽
-管这样的观点看上去似乎是循环辩论，但却没有任何的矛盾。从一个博弈论的观
+要理解分叉经济学，一定要首先理解货币的价值首先是一个社会共识。我们很容易认将加密货币等价于规则和账本，
+其实它们的价值源自它们被广泛接受为货币。尽管这样的观点看上去似乎是循环辩论，但却没有任何的矛盾。从一个博弈论的观
 点来看，一个币只要被广泛接受就可以成为稳定的储值工具。作为一个账本，比
 特币只是一系列的1和0。如何对待这些数量的选择是一个完全基于社会的共识，
 而不是协议本身。
@@ -228,8 +215,8 @@ OCaml语言来实现这个程序的原因。
 %% exist and users are confronted with a dilemma. How should they
 %% value each branch of the fork?
 一个成功的分叉并不仅仅对软件工程学有要求，也要求一定数量用户的配合。这
-样的配合在实践上特别难以实现。事实上分叉之后持币者同时拥有两个账户，并
-将面对二选一的问题，也就是如何衡量不同分支的价值。
+样的配合在实践上特别难以实现。事实上分叉之后出现两个账本，用户将面对二选一的问题，
+也就是如何衡量不同分支的价值。
 
 %% This is a coordination game where the answer is to primarily value
 %% the branch other users are expected to primarily value. Of course,
@@ -237,7 +224,7 @@ OCaml语言来实现这个程序的原因。
 %% branch for the same reason. These games were analyzed by economist
 %% Thomas Schelling and focal points are sometimes referred to as
 %% ``Schelling points''\cite{schelling}.
-这是一个所谓但配合游戏，用户往往选择他们所认为其他用户被期待选择的分支。
+这是一个所谓的协调博弈，用户往往选择他们所认为其他用户被期待选择的分支。
 所以，这些用户很可能也会使用同样的策略来基于同样的原因来做出选择。经济
 学家Thomas Schelling对这些博弈进行过仔细的研究，并提出了一些原创的观点
 \cite{schelling}。
@@ -247,9 +234,8 @@ OCaml语言来实现这个程序的原因。
 %% the ``default'' choice.  A ``default'' could be to follow the lead
 %% of a core development team or the decrees of a government
 %% regardless of their merit.
-不幸的Schelling最优并不总是被绝大所数的持币者所选择。它只是一个默认选
-择。这个默认选择可以是跟随核心开发团队的意见，它也可以是跟随政府的指令，
-无论正确与否。
+不幸的是，Schelling最优并不保证总是被绝大所数的持币者所选择，这只是一个默认选
+择。默认选择可以是跟随核心开发团队的意见，它也可以是跟随监管的裁定。
 
 
 %% An attacker capable of changing social consensus controls the
@@ -263,7 +249,7 @@ OCaml语言来实现这个程序的原因。
 币价随着共识的转移而崩溃，那么和最初的共识协议保持一致的选择将变得毫无
 意义。\footnote{一个论点是永远不会有超过两千一百万个比特币，因为如果一
   个fork提高这个上限，那么它就不再是比特币了。这种观点是没有道理的，比
-  特币是共识所认为是的东西。}
+  特币是共识所达成的。}
 
 %% Core development teams are a potentially a dangerous source of
 %% centralization.  Though users can fork any open source project,
@@ -273,9 +259,8 @@ OCaml语言来实现这个程序的原因。
 %% on which an attacker could exercise leverage.
 核心开发团队是潜在的非常危险的中心化威胁。尽管用户可以对一个开源项目进
 行分叉，但是这个能力在那些给有足够能力的强大到足够改变社会共识的攻击者
-面前所能提供的保护是微不足道的。这和区块链分叉在协议内的不同。即使我们
-所选择无条件的信任的开发团队总是善意的，这仍然是一个系统的短板，可以被
-攻击者所利用。
+面前所能提供的保护是微不足道的。即使我们认定所选择无条件的信任的开发团队总是善意的，
+这仍然是一个系统的短板，可以被攻击者所利用。
 
 
 %% Tezos guards against the vulnerabilities wrought by the source of
@@ -284,10 +269,9 @@ OCaml语言来实现这个程序的原因。
 %% This allows coordination and enshrines the principle that forks are
 %% not valid unless they are endogenous, making it much harder to
 %% attack the protocol by moving the consensus.
-Tezos通过极度的去中心化分叉来解决中心化所带来的系统弱点。这个使用自己
-的加密账本来让持币者在分叉问题上进行相互合作。这让协调成为可能，并且让
-原则变得神圣不可侵犯 - 那就是如果不是内部发生的分叉，那么这个分叉将不
-被承认。
+Tezos通过完全的去中心化分叉来解决中心化所带来的系统弱点，通过使用自己
+的加密账本来让持币者在分叉链上进行协调。这让协调成为可能，并且让原则变得神圣不可侵犯
+- 那就是如果不是内部发生的分叉，那么这个分叉将不被承认。最终通过改变共识来攻击协议变得更加困难。
 
 
 %% Suppose for instance that a popular developer announces his intention to fork
@@ -367,8 +351,7 @@ Tezos，其他用户会问``为什么他会试图绕过这个过程？''持币�
 %% selfishly prefer the convenience of centralized mining-pools.
 让事情变得更加糟糕的是，ghash.io,一个大矿池声称自己的一个商业模式是为
 那些交高手续费的转账者提供优先服务，更加剧了大矿工赚更多的钱的趋势。不
-幸的是，p2pool没有能够吸引大量的算力，因为大多数的矿工自私地因为方便而
-选择了中心化的矿池。
+幸的是，p2pool没有能够吸引大量的算力，因为大多数的矿工因为方便自私地选择了中心化的矿池。
 
 %% Many have argued that fears of market concentration are
 %% overblown. They are generalizing hastily from the real world economy.
@@ -410,9 +393,9 @@ Tezos，其他用户会问``为什么他会试图绕过这个过程？''持币�
 %% large mining pool.
 很多经济学观点认为自然垄断者没有动机来滥用自己的垄断地位。这个观点也可
 以被运用在比特币挖矿行业 - 毕竟，哪一个占据主导地位的矿工会冒着让自己
-投资减损的风险来让破坏这个货币？然而不幸的是，这仍然产生了一个巨大的系
+投资减损的风险来破坏这个货币？然而不幸的是，这仍然产生了一个巨大的系
 统风险，因为拥有大算力的矿工可以被不诚实的攻击者所利用。一个破坏网络的
-双花攻击的代价\emph{不会}高过让几个大矿池变节的费用。
+双花攻击的代价\emph{不会}高过颠覆几个大矿池的费用。
 
 %% There have been proposals intended to address this issue by
 %% tweaking the protocol so it would be impossible for pool organizers
@@ -430,8 +413,8 @@ Tezos，其他用户会问``为什么他会试图绕过这个过程？''持币�
 然而这些提议仅仅让矿池不能够从匿名参与者那里集中算力，而参与者仍然没有
 有效报复手段。矿池也可以采用非匿名的方式进行组织。矿池主运行算力，而参
 与者仅仅持有股份，或者组织者可以追踪那些不诚实的成员，要求他们加入一个
-可以被辨识的nonce在他们要进行哈希的区块中。这样的结果是提高匿名的挖矿
-者的变化度，而让算力更加集中在少数几个挖矿集团手里。
+可以被辨识的身份在他们要进行哈希的区块中。这样的结果是增加匿名的挖矿
+操作的变化，并且让算力更加集中在少数几个挖矿集团手里。
 
 %% Proof-of-stake, as used by Tezos, does not suffer from this
 %% problem: inasmuch as it is possible to hold 51\% of the mining
@@ -456,10 +439,10 @@ PoW面临一个更加深刻的问题是很难让矿工和股东之间达成利�
 %% on transactions depends on the supply and demand for
 %% transactions. The supply of transactions on the blockchain is
 %% determined by the block size and is fixed.
-长期来看，挖矿的总利润应该是被支付给矿工的所有的交易手续费。因为矿工们
+长期来看，挖矿的总利润应该是支付给矿工的所有的交易手续费之和。因为矿工们
 彼此竞争来产生哈希，花在挖矿上的钱最终将比利润略小，而花在转账上的费用
-依赖于对转账的供给和需求。这个在链的供给被区块的大小所限制，而区块大小
-已经被锁死。
+依赖于对转账的供给和需求。所能接受交易的数量受区块的大小所限制，而且区块大小
+是固定的。
 
 %% Unfortunately, there is reason to expect that the demand for
 %% transactions will fall to very low levels. People are likely to
@@ -490,12 +473,12 @@ PoW面临一个更加深刻的问题是很难让矿工和股东之间达成利�
 %% to subsidize mining using a pledge type of fund
 %% raising\cite{dominantassurance}.  A robust currency should not need
 %% to rely on charity to operate securely.
-试图强加一个最低的转账费用最终将导致问题恶化，并让用户更加依赖于链下的
+试图强加一个最低的转账费用可能会将导致问题恶化，并让用户更多依赖于链下
 转账。随着支付转账费的数量下降，矿工的收益也随着下降，而发动51攻击的成
 本也会下降。简单来说，区块链劳动证明PoW的安全面临一个公地问题
-\cite{btccommons}。核心开发Mike Hearn已经指出使用特别的转账来给挖矿提
-供资助，使用一种pledge的融资方式\cite{dominantassurance}。一个健壮的货
-币应该不需要依赖善意才能够稳定运作。
+\cite{btccommons}。核心开发Mike Hearn已经建议使用特殊的转账来给挖矿提
+供资助，即一种pledge的融资方式\cite{dominantassurance}。一个健壮的货
+币应该不需要假定节点无恶意才能够安全运作。
 
 %% Proof-of-stake fixes these bad incentives by aligning the
 %% incentives of the miners and stakeholders: by very definition, the
@@ -507,9 +490,8 @@ PoW面临一个更加深刻的问题是很难让矿工和股东之间达成利�
 %% without having to compete through wealth destruction.
 股权证明机制(PoS)解决了这些问题，通过重新配置矿工和用户之间的关系：按
 照其定义，矿工也同时是持币人，因此也希望转账的费用比较低。于此同时，因
-为PoS挖矿并不是基于对资源的消耗之上，所有的交易的成本（不管是直接的费
-  用还是间接的通货膨胀）都被矿工所承担，而他们可以覆盖自己的运营成本，
-而不需要进行毁坏财富的竞争。
+为PoS挖矿并不是基于资源消耗，所有的交易的成本（不管是直接的费
+  用还是间接的通货膨胀）都被矿工所承担，而他们不需要进行财富消耗的竞争就可以负担运营成本。
 
 %% \subsubsection{Cost}
 \subsubsection{成本}
@@ -577,9 +559,8 @@ PoS货币并不会因为变得更受欢迎而消耗更多资源。
 %% Ethereum introduced a smart contract system with some critical
 %% differences: their scripting language is Turing complete and they
 %% substitute stateful accounts to Bitcoin's unspent outputs.
-尽管比特币允许智能合约，但大多数的opcodes历史上被关闭，其潜在功能也被
-大大地限制。以太坊提出了有很大不同的智能合约概念。 它们的scripting语言
-是图灵完备的而且用stateful账户替代了比特币的unspent outputs。
+尽管比特币允许智能合约，但大多数的opcodes已经不能使用，其潜在功能也受到限制。
+以太坊提出智能合约系统，其关键性创新在于：1、脚本语言是图灵完备的；2、用有状态账户替代比特币的未花掉输出（unspent outputs）。
 
 %% While emphasis has been put on the Turing complete aspect of the
 %% language, the second property is by far the most interesting and
@@ -589,22 +570,20 @@ PoS货币并不会因为变得更受欢迎而消耗更多资源。
 %% store. The state of an account's storage can be mutated by making a
 %% transaction towards this account. The transaction specifies an
 %% amount and the parameters passed to the contract code.
-尽管重点是在语言的图灵完备性能，第二个特性是到目前为止最有意思的和强大
+尽管重点是在语言的图灵完备性，但第二个特性是到目前为止最有意思的和强大
 的。在比特币系统里，一个output可以被认为是只有两种状态：花掉和没有被花
-掉。在以太坊，账户（被钥匙所保护）有一个余额，一个合同代码，和一个数据存
-储。这个账户的存储状态可以被改变为让一个交易导向这个账户。这个交易详细
-规定了被导向合同代码的一个数量和参数。
+掉。在以太坊，账户（被密钥所保护的）维护一个余额，一个合约代码，和一个数据存
+储。一个账户存储的状态可以由向该账户的交易改变。该交易规定传入合约代码的币的数量和参数。
 
 %% A downside of a Turing complete scripting language for the
 %% contracts is that the number of steps needed to execute a script is
 %% potentially unbounded, a property which is generally uncomputable.
-图灵完备的一个坏处，那就是潜在需要的步骤是无限制的，这个属性一般是不能检测的。
+图灵完备脚本语言的一个会坏处是需要执行脚本的潜在步骤是无限的，该属性在通过情况下是不可计算的。
 
 %% To address this problem, Ethereum has devised a system by which the miner
 %% validating the transaction requires a fee proportional to the complexity
 %% and number of steps needed to execute the contract.
-为解决这个问题，以太坊提出在验证每笔交易时需要支付一定的费用，
-这个费用与执行合约的复杂性和步骤数量成比例。
+为解决这个问题，以太坊提出矿工在验证每笔交易时引入一定的交易费用，该费用与执行合约的复杂性和步数成比例。
 
 %% Yet, for the blockchain to be secure, \emph{all} the active nodes
 %% need to validate the transaction. A malicious miner could include
@@ -615,12 +594,11 @@ PoS货币并不会因为变得更受欢迎而消耗更多资源。
 %% it. In practice though, most of the interesting smart contracts can
 %% be implemented with very simple business logic and do not need to
 %% perform complex calculations.
-但是，为了让一个区块链变得安全，所有的活跃的节点都必须要能够确认转账。
-一个恶意的矿工可以在他的区块里包含一个交易，让这个成为一个死循环，并且
-给自己支付特别高昂的费用来确认这笔交易。其它的矿工可以浪费很长时间来确
-认这笔交易。更差劲的是，他们可以拖延，并且不确认。实际上，大多数的有趣
-的智能合约可以被实现，按照很简单的商业逻辑，并且不需要进行特别复杂的计
-算。
+但是，为了让区块链变得安全，\emph{all}活跃节点需要验证交易。
+一个恶意的矿工可以在其区块里包含一个交易，该交易内的程序是一个死循环，并且
+给自己支付特别高昂的费用来确认这笔交易。其它的矿工将会浪费很长时间来确
+认这笔交易。更糟糕的是，他们可以拖延，并且不确认。实际上，大多数的有趣
+的智能合约按照很简单的商业逻辑进行实现，并不需要特别复杂的计算。
 
 %% Our solution is to cap the maximum number of steps that a program
 %% is allowed to run for in a single transaction. Since blocks have a
@@ -634,12 +612,9 @@ PoS货币并不会因为变得更受欢迎而消耗更多资源。
 %% amendable, the cap can be increased in future revisions and new
 %% cryptographic primitives included in the scripting language as the
 %% need develops.
-我们的解决方案是对最大步数加一个限制。因为区块有一个大小的限制，转账的
-数量也因此被限制，所以也有一个针对每个区块运算步数的上限。这个限制让针
-对CPU使用的DOS攻击变得无效。同时，有效的用户可以发行多个交易来计算，这将比
-单个交易允许的更多的步骤数。Miners或许可以决定忽略太长的执行，如果他们
-觉得被包含的费用过于低。因为Tezos的协议可以被修改，这个上限可以在未来
-被提升，而随着需求的产生，新的加密算法也可以被添加到scripting语言。
+我们的解决方案是对单个交易中程序允许执行的最大步数加一个限制。区块有一个大小的限制，用于限制交易数量，在每个区块运算步数上也有一个上限。这个限制让针
+对CPU使用的DOS攻击变得无效。同时，合法用户可以发起多个交易来允许超过单个交易步长限制的更多步数。矿工可以决定忽略太长执行的交易，如果他们觉得被包含的费用过于低。
+因为Tezos的协议可以被修改，这个上限可以在未来修订中提升，同时随着需求的变化，新的加密原语也可以被添加到脚本语言。
 
 %% \subsection{Correctness}
 \subsection{正确性}
@@ -653,7 +628,7 @@ PoS货币并不会因为变得更受欢迎而消耗更多资源。
 %% exploitable by remote attackers. E-cash gives an immediate payoff
 %% to any attacker clever enough to discover and exploit such a
 %% vulnerability.
-比特币底下是八十亿美元市值的市场。正如安全研究员Dan Kaminsky所解释的，
+比特币是八十亿美元市值的市场。正如安全研究员Dan Kaminsky所解释的，
 比特币看上去像一个安全的噩梦。一个\verb!C++!的代码基础外加一个定制的二
 元协议节点通过互联网互联并保存电子现金 - 这样的配置听上去似乎是一个完
 全的灾难。\verb!C++!语言有各种内存腐败的bug。 当他们被通过互联网链接在
@@ -691,26 +666,23 @@ OpenSSL的代码库中被发现。这些个弱点有一个共同点 - 他们产�
 %% powerful pattern matching and higher-order modules, make it easy to
 %% concisely and correctly describe the type of logic underpinning
 %% blockchain based protocols.
-有些语言都没有这问题。OCaml是一个功能上的程序语言被INRIA在1996年所开发
+有些语言都没有这问题。OCaml是一个功能上的程序语言，由INRIA在1996年所开发
 出来,而它自己也是建立在之前的努力之上的。它的速度和\verb!C++!差不多，
 它在各个指标上大致和最快的编程语言不相上下\cite{shootout}。更重要的是
 OCaml是非常强的类型,并提供非常强大的类型推理系统，语法和句法，包括强大
-的模式搭配和高秩序模块，这让这个编程语言很容易集成和正确地表述程序的基
-于底层区块链的协议。
+的模式搭配和高排序模块，这让这个编程语言很容易集成和正确地表述底层区块链协议的类型。
 
 %% OCaml's semantic is fairly rigorous and a very large subset has
 %% been formalized\cite{semantic}, which removes any ambiguity as to
 %% what is the intended behavior of amendments.
-OCaml的句法非常的严谨，并且其很多的子项都已经被完全形式化
-\cite{semantic}，这也就去除了很多模糊性，尤其是关于修改行为的含糊。
+OCaml的语法十分严谨，并且其很多的子集都已经被完全形式化\cite{semantic}，这也消除了关于修改行为的任意歧义。
 
 %% In addition, Coq, one of the most advanced proof checking software is
 %% able to extract OCaml code from proofs. As Tezos matures, it will be
 %% possible to automatically extract key parts of the protocol's code
 %% from mathematical proofs of correctness.
-同时，Coq作为最先进的证据核实软件，可以从证据中提取出OCaml代码。随着
-Tezos变得越来越成熟，它将能够自动地从协议代码中提取关键部分，并在数学
-意义上证明它的正确性。
+此外，Coq作为一个最高级的证明检测软件，可以从证明中提取出OCaml代码。随着
+Tezos变得越来越成熟，它将能够从正确性的数学证明中自动化地提取协议代码的关键部分。
 
 %% Examples of spectacular software failure abound. The heartbleed bug
 %% caused millions of dollars in damages. In 2013, a single bug at
@@ -720,14 +692,14 @@ Tezos变得越来越成熟，它将能够自动地从协议代码中提取关键
 %% cost of the rocket and the cargo was estimated at \$500M.
 很多软件失败的例子。例如heartbleed漏洞就导致数百万美元的损失。在2013年，
 一个高频交易机构Knight资本因为一个bug导致5亿美元的损失。在1996年，一个
-arithmetic的溢出bug导致Ariane5火箭爆炸，导致70亿美元开发成本火箭报废，
-火箭费用和运载物品的合计代价约为五亿美元。
+arithmetic的溢出bug导致Ariane5火箭爆炸，导致70亿美元火箭开发成本报废，
+火箭费用和运载物品的合计代价估值约为五亿美元。
 
 %% All of these bugs could have been prevented with the use of formal
 %% verification.  Formal verification has progressed by leaps and
 %% bounds in recent years, it is time to use it in real systems.
-所有的这些漏洞都可以通过“正式确认”被防止。正式确认技术已经发生了天翻地
-覆的变革。是时候在现实的系统中加以运用了。
+所有的这些漏洞都可以通过形式化验证避免。形式化验证近些年已经发生了天翻地
+覆的变革，是时候在真实系统环境中加以运用了。
 
 %% \section{Abstract Blockchains}
 \section{抽象的区块链}
@@ -748,16 +720,12 @@ arithmetic的溢出bug导致Ariane5火箭爆炸，导致70亿美元开发成本�
 %% difficulty.  Blocks, as their name suggests, actually bundle
 %% together multiple operations (known as transactions in the case of
 %% Bitcoin).  These operations are sequentially applied to the state.
-Tezos试图代表一个区块链的协议，在最广泛的方式，并且试图保持作为一个原
-始的协议的有效性。这样的一个区块链的目标是代表一个独立的不断地被编辑的
-状态。为了被避免两个同步发生编辑的冲突,它代表了账本的状态，也就是一系
-列被运用到初始状态的转变。这些个转变是区块链的``区块''，而且 --- 在比
-特币里面 --- 这个状态主要是未被花费的输出的集合。因为区块被非对称的很
-多的节点创造出来这个树的每一个节点都代表一个可能的状态，以及一个不同的
-区块链。比特币认定只有一个分支是有效的分支，而最有效的分支就是那个结合
-了最高难度的分支。区块，就像它的名字所暗示的那样，只是把不同的
-operations绑定在一起 （在比特币系统中，这是转账）。这些系统随后被应用
-到状态上来。
+Tezos试图以最广泛的方式表示一个区块链的协议，并且试图保持作为一个原
+始协议的有效性。一个区块链的目标是表征一个正在被并发修改的唯一状态。
+为了被避免两个同步发生修改的冲突,它使用账本表征状态，也就是一系列被运用到初始状态的转化操作。
+这些个转化是区块链的``区块''，而且 --- 在比特币里面 --- 这个状态主要是未被花费的输出的集合。因为区块由许多并发节点异步创建，形成区块树。
+每个叶子节点都代表一个可能的状态，以及一个不同的区块链。比特币认定只有一个分支是有效的分支，而最有效的分支就是那个拥有最高难度的分支。区块，就像它的名字所暗示的那样，实际上是把多个
+操作绑定在一起 （在比特币系统中，称为交易）。这些操作随后被应用到状态上。
 
 %% \subsection{Three Protocols}
 \subsection{三层协议}
@@ -771,8 +739,7 @@ operations绑定在一起 （在比特币系统中，这是转账）。这些系
 %% The role of the meta shell is to handle the network protocol in as
 %% agnostic a way as possible while delegating the transaction and
 %% consensus protocol to an abstracted implementation.
-其中元壳所扮演的角色是负责这个网络的协议，在一个完全不可知的场景中，把
-转账和共识协议发送给抽象的实现。
+其中元壳所扮演的角色是以一种透明的方式处理这个网络的协议，并把转账和共识协议指派给抽象的实现。
 
 %% \subsubsection{Network Protocol}
 \subsubsection{网络协议}
@@ -783,17 +750,15 @@ operations绑定在一起 （在比特币系统中，这是转账）。这些系
 %% development occurs. For instance, bloom filters were introduced in
 %% 2012 through BIP0037 to speed up the simple payment verification
 %% for clients which do not download the whole blockchain.
-比特币的网络协议本质上是一个流言网络，它让交易得以广播，以及区块得以下
-载和发表，以及peers被发现，等等。这是开发最为集中的区域。例如，布鲁姆
-过滤在2012年通过BIP0037被引入，引入来不需要下载全部区块链的客户端从而
-加速简单的支付确认。
+比特币的网络协议本质上是一个Gossip网络，允许交易广播，以及区块下载和发布，以及节点发现，等等。
+这是最为集中的开发区域。例如，在2012年通过BIP0037引入布隆过滤器加速简单的支付验证，不需要下载全部区块链的客户端。
 
 %% Changes to the network protocol are relatively
 %% uncontroversial. There may be initial disagreements on the
 %% desirability of these changes, but all parties interests are
 %% fundamentally aligned overall.
-这些对网络协议的改变相对而言不是那么有争议。可能存在起初对这些改变可行
-度的争议，但是所有的参与者的利益都在本质上一致的。
+这些对网络协议的改变相对而言不是那么有争议。可能起初存在对这些改变可行
+度的争议，但是所有的参与者的利益都在总体上一致的。
 
 %% These changes do not need to happen in concert either. One could
 %% devise a way to integrate Bitcoin transactions steganographically
@@ -801,15 +766,14 @@ operations绑定在一起 （在比特币系统中，这是转账）。这些系
 %% started publishing transactions this way, miners would start
 %% parsing cat pictures to find transactions to include in the
 %% blockchain.
-这些改变并不需要同步发生。一个人可以找到一种方式将比特币的交易上添加自
-己宠物猫的照片。如果足够的人开始用这种方式来发表他们的交易，那么矿工就
-会开始parse猫的照片来寻找他们添加到区块链的交易。
+这些改变并不需要同步发生。一个人可以找到一种方式将比特币的交易上融入到自
+己宠物猫的图片内。如果足够的人开始用这种方式来发布他们的交易，那么矿工就
+会开始解析猫的图片来查询他们添加到区块链的交易。
 
 %% While a healthy network requires compatibility, competing
 %% innovation in the network protocol generally strengthens a
 %% cryptocurrency.
-尽管一个健康的网络需要有兼容性，在网络协议上竞争性的创新通常会让一个加
-密货币变得更加茁壮。
+尽管一个健康的网络需要有兼容性，协议上的创新竞争通常会让一个加密货币变得更加茁壮。
 
 %% \subsubsection{Transaction Protocol}
 \subsubsection{转账协议}
@@ -817,24 +781,21 @@ operations绑定在一起 （在比特币系统中，这是转账）。这些系
 %% valid. It is defined in Bitcoin, for instance, through a scripting
 %% language. First, coins are created by miners when they find a
 %% block. The miner then attaches a script to the coins that he mined.
-交易协议规定了哪种交易是正确的。 这在比特币上是通过scripting语言加以实
-现的。首先，比特币是由矿工通过挖矿生产出来的矿工然后在他所挖出的币上添
-加一个script
+交易协议描述什么致使转账生效。 这在比特币上是通过脚本实现。首先，比特币是由矿工通过挖矿生产出来。
+之后将脚本增添在这些币之上。
 
 %% Such a script is known as an ``unspent output''. Transactions
 %% combine outputs by providing arguments for which their scripts
 %% evaluate to true. These arguments can be thought of keys and the
 %% scripts as padlocks.
-这样的一个script也就是所谓的``unspent output''。交易通过对script数值的
-辩论和确认来合并outputs。这些辩论就像是钥匙而那些scripts就是锁。
+这样的一个脚本也就是所谓的``未花掉输出''。交易通过提供脚本估值为真的参数合并输出。这些参数可以理解为作为锁的密钥和脚本。
 
 %% In simple transactions, such scripts are merely signature-checking scripts but
 %% more complex scripts can be formed. These outputs are added up and allocated
 %% among a set of new outputs. If the amount of output spent is greater than the
 %% amount allocated, the difference can be claimed by the miner.
-在简单的转账中， 这些scripts仅仅是做签名的审核，但是也存在更复杂的
-scripts。这些outputs被添加在一起并被放置到一组新的outputs之中。如果被
-花掉的output的数量比allocated的量要打，那么矿工可以获得差额。
+在简单的转账中， 这些脚本仅仅是做签名的审核，但是也存在更复杂的脚本。这些输出被添加在一起并被放置到一组新的输出之中。如果被
+花掉的输出的数量比分配的大，那么矿工可以获得差额。
 
 %% Changes to the transaction protocol are more controversial than
 %% changes to the network protocol. While a small group of people
@@ -844,7 +805,7 @@ scripts。这些outputs被添加在一起并被放置到一组新的outputs之�
 %% the cooperation of a majority of the miners.  These are generally
 %% referred to as ``soft-fork''.
 和那些对网络协议的改变相比，对转账协议的改变更加富有争议性。尽管一小部
-分人就可以单方面的改造网络，使用猫咪照片来广播交易，但是要对交易协议本
+分人就可以通过使用猫图片广播算法单方面的改变转账协议，但是要对交易协议本
 身进行修改则要复杂的多。这样的改变通常并不影响区块的有效性，因此仅仅要
 求大多数的矿工的同意。这些通常被称为``软分叉''。
 
@@ -853,7 +814,7 @@ scripts。这些outputs被添加在一起并被放置到一组新的outputs之�
 %% malleability issue would be a transaction protocol level
 %% change. The introduction of Zerocash, also a transaction protocol
 %% level change, risks being too controversial to be undertaken.
-那些相对不那么有争议性的改变在这里有更多的机会被实现。而对交易延展性的
+那些相对不那么有争议性的改变在这里有更多的机会被实现。而对交易可锻性的
 修改，零币的引进则是一个转账协议层面的改变，则很有可能产生争议。
 
 %% \subsubsection{Consensus Protocol}
@@ -892,45 +853,42 @@ Tezos将这三个协议进行了分离。这个转账协议和共识协议在一
 %% accounts and other informations such as the current block number.
 %% Blocks are seen as operators that transform an old state into a new
 %% state.
-为了让协议变得更加通用，我们定义了以下的界面。我们让我们的区块链来代表
-我们现在的经济``状态''，我们命名其为Tezos the \textbf{Context}这或许包
-括各种账户余额和其它信息，例如各种当前的区块编码。区块被视作把旧状态转
-换为新状态的操作。
+为了让协议变得更加通用，我们定义了以下的接口。我们让区块链来代表当前的经济``状态''，在Tezos中命名为\textbf{Context}。这可能包
+括大量账户余额和其它信息，例如当前的区块高度。区块被视为将旧状态转换为新状态的操作。
 
 %% In this respect, a protocol can be described by only two functions:
-在这个方面，一个协议可以被描述为仅有两个功能：
+在这个方面，一个协议可以被描述为仅有两个函数：
 \begin{itemize}
 %% \item[-] \textbf{apply} which takes a Context and a block and
 %%   returns either a valid Context or an invalid result (should the
 %%   block be invalid)
-\item[-] \textbf{运行} 这需要一个语境（Context）和一个区块。这个区块要
-  么符合要求，要么不符合要求（假如区块不合要求的话）
+\item[-] \textbf{apply} 需要上下文（Context）和区块作为参数。返回一个有效的Context或无效结果（应该是区块无效）
 %% \item[-] \textbf{score} which takes a Context and returns a score
 %%   allowing us to compare various leafs of the blockchain to
 %%   determine the canonical one.  In Bitcoin, we would simply record
 %%   the total difficulty or the chain inside the Context and return
 %%   this value.
-\item[-] \textbf{得分} 同样需要一个语境，并且受到一个得分，可以让我们
-  来对比不同区块链叶来决定哪支是主链. 在比特币里，我们仅仅是简单地记录
-  总的难度，或者是语境链，并返回这个数值。
+\item[-] \textbf{score} 需要上下文（Context）作为参数，返回得分，该得分可以让我们
+  来对比不同区块链的叶子节点来决定哪支是主链。在比特币里，我们仅仅是简单地记录
+  总的难度，或者是上下文中的链，并返回这个值。
 \end{itemize}
 
 %% Strikingly, these two functions alone can implement \emph{any}
 %% blockchain based crypto-ledger. In addition, we attach those
 %% functions to the context itself and expose the following two
 %% functions to the protocol:
-值得注意的是，这两个功能可以实现任何一个基于区块链的加密账本。除此以外，
-我们把以下两个功能暴露给协议层：
+值得注意的是，这两个函数可以实现任何一个基于区块链的加密账本。除此以外，
+我们针对上下文本身附加那些函数，并暴露给协议以下两个函数：
 
 \begin{itemize}
 %% \item[-] \textbf{set\_test\_protocol} which replaces the protocol
 %% used in the test-net with a new protocol (typically one that has
 %% been adopted through a stakeholder voter).
-\item[-] \textbf{设置测试协议}用一个新的协议来替代测试网中使用的协议
-  （特别是通过持币者投票来被执行的那个）
+\item[-] \textbf{set\_test\_protocol}用一个新的协议来替代测试网中使用的协议。
+  （特别是通过持币者投票选举出的那个）
 %% \item[-] \textbf{promote\_test\_protocol} which replaces the
 %% current protocol with the protocol currently being tested
-\item[-] \textbf{促进测试代码}用目前的测试协议来替代目前的协议。
+\item[-] \textbf{promote\_test\_protocol}用目前的测试协议来替代目前的协议。
 \end{itemize}
 
 %% These two procedures allow the protocol to validate its own
@@ -942,9 +900,8 @@ Tezos将这三个协议进行了分离。这个转账协议和共识协议在一
 %% within the protocol and requiring that every amendment include a
 %% proof of constitutionality.
 这两个操作让协议来确认自己的替代品。尽管种子协议依赖于一个简单的绝大多
-数投票通过机制，未来我们可以引入更负责的投票规则。例如，股东可以通过投
-票来要求特定的特性被加入到未来的协议中区。这个可以通过一个证明检测机制-协
-议内部的，来加以实现，并且要求每一个修改包含一个宪法证明。
+数投票通过机制，未来我们可以引入更复杂的投票规则。例如，股东可以通过投
+票来要求特定的特性被加入到未来的协议中区。这个可以通过在协议内融入一个证明检测机制并且要求每一个修改包含一个合规性证明，来加以实现。
 
 %% \section{Proof-of-Stake}
 \section{股权证明}
@@ -956,8 +913,8 @@ Tezos将这三个协议进行了分离。这个转账协议和共识协议在一
 %% proof-of-stake systems, we will explain our way of dealing with
 %% them.\footnote{A full, technical, description of our proof-of-stake
 %% system is given in the Tezos white paper.}
-Tezos可以执行任何一个种类的区块链程序：包括PoW，PoS甚至中心化的方式。
-由于PoW的固有缺陷，Tezos的种子协议目前按照PoS 的方式实现。PoS系统毫无
+Tezos可以实现任何一个类型的区块链算法：包括PoW，PoS甚至中心化的方式。
+由于PoW的固有缺陷，Tezos的种子协议目前按照PoS的方式实现。PoS系统毫无
 疑问面临很多的理论上的瓶颈，这里我们要解释一下我们是如何来解决这些问题
 的。\footnote{我们的技术白皮书提供了一个全面的技术性的对PoS的描述}
 
@@ -993,7 +950,7 @@ Tezos可以执行任何一个种类的区块链程序：包括PoW，PoS甚至中
 stake问题。
 
 %% \subsection{Mitigations}
-\subsection{减低负面影响的措施}
+\subsection{缓解负面影响的措施}
 
 %% While this theoretical objection seems ironclad, there are
 %% effective mitigations.  An important insight is to consider that
@@ -1005,13 +962,13 @@ stake问题。
 尽管理论上的批评似乎是无丝毫漏洞，但是还是存在有效的消除影响的手段的。
 一个很重要的洞见是这里有两种分叉。一个非常深，可以重写一个相当久的历史，
 一个是那些只是试图进行双花的。在表面上，两者之间只是存在一个数量上的不
-同，但是在实际上，目的动机以及解决方案(mitigation)都有很大的不同。
+同，但是在实际上，激励、动机以及缓解方案都有很大的不同。
 
 %% No system is unconditionally safe, not Bitcoin, not even public key
 %% cryptography.  Systems are designed to be safe for a given
 %% \emph{threat model}. How well that model captures reality is,
 %% \emph{in fine}, an empirical question.
-没有任何一个系统可以做到无条件的安全 比特币做不到，公钥加密学也做不到。
+没有任何一个系统可以做到无条件的安全，比特币做不到，公钥加密学也做不到。
 系统的安全措施是针对特定\emph{威胁模型}设计的。这个模型如何精准地对应
 现实是一个非常\emph{精细}和实际的问题。
 
@@ -1021,8 +978,8 @@ stake问题。
 %% blockchain reorganizations.  Checkpoints are a hack. As Ben Laurie
 %% points out, Bitcoin's use of checkpoints taints its status as a
 %% fully decentralized currency\cite{distrib_impossible}.
-不规则的制衡点可以有效地避免一个长链重组问题。制衡点可以成为一种黑客攻
-击方式。就像Ben Laurie所指出的那样，比特币对制衡点的使用有损于它的去中
+不规则的检查点可以有效地避免一个长链重组问题。检查点可以成为一种黑客攻
+击方式。就像Ben Laurie所指出的那样，比特币对检查点的使用有损于它的去中
 心化\cite{distrib_impossible}。
 
 %% Yet, in practice, annual or even semi-annual checkpoints hardly
@@ -1036,11 +993,11 @@ stake问题。
 %% that makes forgery impossible.  In contrast, the problem of forming
 %% a consensus over a period of minutes is more safely solved by a
 %% decentralized protocol.
-但是实际上，永久的或者是半永久的制衡点都是没有问题的。人类现有的机构有
+但是实际上，永久的或者是半永久的检查点都是没有问题的。人类现有的机构有
 足够的能力在几个月的时间内针对一个单独的哈希形成一个共识。这个哈希可以
 在全球主要的报纸上发表，刻在餐桌上，喷涂在桥上，以及被编程在歌曲里，被
 标记在新的水泥平面上，纹在你的宠物雪貂身上, 有数不清的方式可以来记录这
-个制衡点，让作假变得不可能。而且，它可以在几分钟内形成共识并在一个中心
+个检查点，让作假变得不可能。而且，它可以在几分钟内形成共识并在一个中心
 化的系统内获得更加安全的实现。
 
 %% \subsubsection{Statistical Detection}
@@ -1053,7 +1010,7 @@ stake问题。
 %% in a larger fraction of the coins and can thus be distinguished,
 %% statistically, from the forgery.
 转账可以指向属于最长链的区块，因此可以间接地来签这个链。如果一个攻击者
-试图复制一个长链，那么只能在最后制衡点后生成他控制的币的转账当一个长的
+试图复制一个长链，那么只能在最后检查点后生成他控制的币的转账当一个长的
 有效的链显示一个相对大额转账时，存在方法可以以统计学的方式甄别真伪。
 
 %% This family of techniques (often called TAPOS, for ``transactions
@@ -1064,7 +1021,7 @@ stake问题。
 %% both type of forks.
 这些技术通常被称为TAPOS，对于短的链，因为样本太少所以不足够进行有统计
 学意义的测试，所以不是特别有效。但是和一个技术同时使用是，这个方法可以
-用来处理短期的分叉，产生一个对两类分叉都足够健壮的选择程序。
+用来处理短期的分叉，产生一个对两类分叉都足够健壮的合成选择程序。
 
 %% \paragraph{Cementing}
 %% Cementing --- a technique which consists in refusing to
@@ -1109,8 +1066,8 @@ stake问题。
 这里我们引入来一个创新的观点，就是对双重签名者的惩戒。如果对一个交易的
 签名延迟，这个交易可以被任何的双花企图被侦测到的时候被撤回。这足以防止
 一个自私的用户为了获得这个分支成功所带来的收益而机会主义地试图签署一
-个分支。然而，一旦一个奖励被支付，这个动机也就不复存在了。因此我们使
-用一个延迟的方法来让TAPOS变得在统计学意义上有效，或者为了让审查点变得
+个分支加。然而，一旦一个奖励被支付，这个动机也就不复存在了。因此我们使
+用一个延迟的方法来让TAPOS变得在统计学意义上有效，或者为了让检查点变得
 更加有效。
 
 %% In order to incentivize stakeholders to behave honestly, we
@@ -1125,7 +1082,7 @@ stake问题。
 %% In order to allow stakeholders not to be permanently connected to
 %% the Internet and not to expose private keys, a different, signature
 %% key is used.
-为了让用户不去长时间与互联网联通时不暴露私钥，需要每次使用一个不同的签
+为了让用户在长时间与互联网联通时不暴露私钥，需要每次使用一个不同的签
 名密钥。
 
 %% \subsection{Threat Models}
@@ -1134,7 +1091,7 @@ stake问题。
 %% cryptography. Systems are designed to be safe for a given
 %% \emph{threat model}. How well that model captures reality is,
 %% \emph{in fine}, an empirical question.
-没有任何一个系统可以做到无条件的安全 比特币做不到，公钥加密学也做不到。
+没有任何一个系统可以做到无条件的安全，比特币做不到，公钥加密学也做不到。
 系统的安全措施是针对特定\emph{威胁模型}设计的。这个模型如何精准地对应
 现实是一个非常\emph{精细}和实际的问题。
 
@@ -1152,7 +1109,7 @@ stake问题。
 
 %% With checkpointing (be it yearly), the same properties can be
 %% achieved by a proof-of-stake system.
-通过引入检验点机制，PoS系统同样可以实现类似比特币的安全特性。
+通过引入检查点机制，PoS系统同样可以实现类似比特币的安全特性。
 
 %% Without checkpointing proof-of-stake systems cannot make this claim. Indeed,
 %% it would be theoretically possible for an attacker to purchase old keys from
@@ -1161,7 +1118,7 @@ stake问题。
 %% former stakeholders cannot be cheaply corrupted into participating in an
 %% attack on the network. In this case, the role ``stake'' in the proof-of-stake is
 %% only to avoid adverse selection by malicious actors in the consensus group.
-确实，理论上仍存在这种可能，就是一个攻击者可以购买旧密钥对网络进行攻击，
+事实上，理论上仍存在这种可能，就是一个攻击者可以购买前持币人的旧密钥对网络进行攻击，
 而这样对他们没有任何不利后果。在这种情况下，需要一个更强健的假设，那就
 是参与者，也就是多数的目前或者从前的股权持有者，都不能够在一个针对网络
 攻击中被容易地贿赂。这种情况下，``股权''在股权证明的角色是避免恶意攻击
@@ -1193,9 +1150,9 @@ stake问题。
 %% the transaction deemed invalid.  This works similarly to the
 %% coin-join protocol \emph{without} requiring the cooperation of the
 %% addresses involved in obfuscating the transaction.
-Crypto Note建造了一个协议，使用环形签名来保证隐私。用户可以能够在花币
+CryptoNote建造了一个协议，使用环形签名来保证隐私。用户可以能够在花币
 的同时不暴露$N$个地址中的那个花了这些币的地址。双花者将会暴露，而转账
-也被证实为无效。这个和Coin-join相类似，而\emph{不需要}地址之间的合作。
+也被证实为无效。这个和Coin-join协议\emph{without}相类似，需要参与交易混洗的地址之间的合作。
 
 %% One of the main advantage of ring signatures is that they are
 %% comparatively simpler to implement than NIZKPK and rely on more
@@ -1213,23 +1170,22 @@ Crypto Note建造了一个协议，使用环形签名来保证隐私。用户可
 %% providing a NIZKPK of the secret attached to a coin in the tree.
 %% It uses a relatively new primitive, SNARKs, to build very small
 %% proofs which can be efficiently checked.
-无交互的零知识证明Matthew Green和其他人建议使用NIZKPK来实现区块链虚拟
-货币的转账不可追踪性。他们最新的成果是能够在Merkle树上附着秘密的一种币。
-被提交的币通过提供一个附着在树上的币的秘密的NIZPK被认领。这使用一个相
-对新的原函数SNARKs，来建立体积非常小的证据。
+Matthew Green和其他人建议使用NIZKPK来实现区块链虚拟货币的转账不可追踪性。
+他们最新的成果是能够在Merkle树上维护带有附加秘密信息的币集合。提交的币通过在树中提供一个附加秘密的币被重新认定。
+这使用一个相对新的原语SNARKs，来建立可以被高效验证的非常小的证明。
 
 %% This technique is attractive but suffers from drawbacks.  The
 %% cryptographic primitives involved are fairly new and have not been
 %% scrutinized as heavily as the relatively simple elliptic curve
 %% cryptography involved in Bitcoin.
-这个技术是有吸引力的，但是也有一些问题。加密学的原函数比较新，并且没有
+这个技术是有吸引力的，但是也有一些问题。加密学的原语比较新，并且没有
 被像椭圆曲线加密法那样被严密地验证过。
 
 %% Secondly, the construction of these proofs relies on the CRS model.
 %% This effectively means that a trusted setup is required, though the
 %% use of secure multi-party computation can reduce the risk that such
 %% a setup be compromised.
-第二，这些证据以来于CRS模型。这意味着需要一个被信任的设施，尽管使用安
+第二，这些证明的构建依赖于CRS模型。这意味着需要一个被信任的设施，尽管使用安
 全的多元计算可能会减少这样设置被攻破的风险。
 
 %% \subsection{Amendment Rules}
@@ -1297,7 +1253,7 @@ Robin Hanson曾经倡议我们对价值进行投票来决定我们的信仰\cite
 %% than 0.6\%?  We think the answer is clearly, and resoundingly
 %% ``yes''.  Bitcoin stakeholders would be doing well while doing
 %% good.
-在2014年七月，比特币的市值已经达到了八十亿美元。如果仅仅是花费比特币货币
+在2014年七月，比特币的市值已经达到了八亿美元。如果仅仅是花费比特币货币
 基数的0.05\%用于慈善事业，比特币就可以\emph{每周}捐赠一百万美元。假如
 在2014年比特币按照这个数量进行慈善捐赠，那么比特币的市值将不止上涨区区
 0.6\%。我们认为这个答案是显然是一定会。比特币持币者可以赢得尊重的同时
@@ -1357,9 +1313,7 @@ Robin Hanson曾经倡议我们对价值进行投票来决定我们的信仰\cite
 %% Furthermore, the ability to solve collective action problems and
 %% easily implement protocols in OCaml will make Tezos one of the most
 %% reactive cryptocurrency.
-不管其它的协议有任何的创新，都有可能让Tezos的持币人接受新的创新。Tezos
-解决了搭便车的问题。而方便地在OCaml上实现协议都让Tezos成为了最具有反馈
-性的加密货币之一。
+不管其它的协议产生任何的创新，Tezos的持币人都有权利接受这些新的创新。Tezos解决共性问题及利用OCaml上轻易实现协议的能力都将使得Tezos成为最具活性的加密货币之一。
 
 \bibliographystyle{unsrt}
 \bibliography{biblio}

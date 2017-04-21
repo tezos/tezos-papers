@@ -15,9 +15,10 @@
 \usepackage{graphicx}
 \usepackage{siunitx}
 \usepackage{url}
-
 \usepackage[hidelinks]{hyperref}
-\newcommand\change[1]{\textcolor{red}{#1}}
+
+
+
 %\epigraphfontsize{\small\itshape}
 \setlength\epigraphwidth{4.6cm}
 \setlength\epigraphrule{0pt}
@@ -33,9 +34,6 @@
 
 \maketitle
 
-
-\change{Changes between the original paper and our current implementation are indicated in red.}
-
 \epigraph{\emph{``Our argument is not flatly circular,
 but something like it.''}}
 {--- \textup{Willard van Orman Quine}}
@@ -43,8 +41,7 @@ but something like it.''}}
 
 \begin{abstract}
 We present Tezos, a generic and self-amending crypto-ledger. Tezos can
-instantiate any blockchain based ledger \change{(we removed the ability to instantiate
-the Doge blockchain which must remain the one and only)}. The operations of a regular blockchain
+instantiate any blockchain based ledger. The operations of a regular blockchain
 are implemented as a purely functional module abstracted into a shell
 responsible for network operations. Bitcoin, Ethereum, Cryptonote, etc. can all
 be represented within Tezos by implementing the proper interface to the network

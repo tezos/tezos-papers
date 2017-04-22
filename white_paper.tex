@@ -325,7 +325,7 @@ and may not make any system call.
 These functions are called through the \textbf{apply} function of the protocol
 which returns the new \textbf{Context}.
 
-Many conditions can trigger a change of protocol. In its simplest version,
+Many conditions can trigger a change of protocol \change {(protocol upgrade votes will be much more frequent in the first year in order to allow for rapid iteration. As a security measure, the Tezos foundation will have a veto power expiring after twelve months, until we rule out any kinks in the voting procedure.)}. In its simplest version,
 a stakeholder vote triggers a change of protocol. More complicated rules
 can be progressively voted in. For instance, if the stakeholder desire they
 may pass an amendment that will require further amendments to provide a
@@ -365,8 +365,8 @@ algorithm.
 \subsection{Economy}
 
 \subsubsection{Coins}
-There are initially $\num{10000000000}$ (ten billion) coins, divisible up to two
-decimal places. We suggest that a single coin be referred to as a ``tez''
+There are initially $\num{10000000000}$ (ten billion) coins \change{(the initial extent of the token supply will be the number of tokens issued during the crowdsale and not specifically “10 billion”, an arbitrary placeholder)}, divisible up to two
+decimal places \change{(for the sake of precision we will in actuality be using eight digits after the decimal)}. We suggest that a single coin be referred to as a ``tez''
 and that the smallest unit simply as a cent. We also suggest to use the
 symbol \tz~(\verb!\ua729!, ``Latin small letter tz'') to represent a tez.
 Therefore 1 cent = \tz\num{0.01} = one hundreth of a tez.
@@ -379,10 +379,10 @@ to incentivize the participants with a pecuniary reward. As explained in the
 position paper, relying on transaction costs alone suffers from a tragedy of the
 commons. In Tezos, we rely on the combination of a bond and a reward.
 
-Bonds are one year security deposits purchased by miners.
+Bonds are one year \change {(bonds will now only last a single cycle, given the high opportunity cost and little benefit to security of a long bond)} security deposits purchased by miners \change {(endorsers will also be required to purchase bonds)}.
 In the event of a double signing, these bonds are forfeited.
 
-After a year, the miners  receive a reward along with their bond to compensate
+After a year \change {(cycle)}, the miners \change {(and endorsers)} receive a reward along with their bond to compensate
 for their opportunity cost. The security is primarily being provided by the
 value of the bond and the reward need only be a small percentage of that value.
 
@@ -411,9 +411,9 @@ from the number of blocks. This is to remove uncertainty as to the length of
 the commitment made by miners. 
 
 \paragraph{Looking forward}
-The proposed reward gives miners a 33\% return on their bond.
+The proposed reward gives miners a 33\% return on their bond \change {(the total block rewards will still start at about 5\% per year, but we may add an asymptotic cap to the total number of tokens. We think it’s irrelevant when the governance model is aligned with the token holder’s interest, but it is important to some people so we’re reluctantly considering it)}.
 This return needs to be high in the early days as miners and signers commit
-to hold a potentially volatile asset for an entire year.
+to hold a potentially volatile asset for an entire year \change {(bonds will only last for a cycle and not a full year)}.
 
 However, as Tezos mature, this return could be gradually lowered to the
 prevailing interest rate. A nominal rate of inflation below 1\% could safely be
@@ -422,7 +422,7 @@ achieved, though it's not clear there would be any point in doing so.
 \subsubsection{Lost coins}
 In order to reduce uncertainty regarding the monetary mass, addresses
 showing no activity for over a year (as determined by timestamps)
-are destroyed along with the coins they contain.
+are destroyed along with the coins they contain \change {(inactive addresses will no longer lose their funds after one year as initially proposed in the white paper, they will only lose their staking rights until they become active again. What it means is that if an address is inactive, it will not be selected to create blocks (which would slow down the consensus algorithm), and it will not be allowed to vote until it is reactivated (to avoid uncertainty about participation rate). This also affects governance)}.
 
 \subsubsection{Amendment rules}
 Amendments are adopted over election cycles lasting $N = 2^{17} = \num{131072}$
@@ -477,8 +477,8 @@ are explained in more details below.
 Each block is mined by a random stakeholder (the miner) and includes
 multiple signatures of the previous block provided by random 
 stakeholders (the signers). Mining and signing both offer a small reward but
-also require making a one year safety deposit to be
-forfeited in the event of a double mining or double signing.
+also require making a one year \change {{unbonding will happen after one cycle, and not one year as initially suggested. Prolonging the period longer than a cycle did not really improve security at the cost of immobilizing a lot of capital)} safety deposit to be
+forfeited in the event of a double mining or double signing \change {{it appears you've already changed this, as the Medium article states that signers, assuming this is the same as 'endorsers', were not originally but now are required to bond)}.
 
 The protocol unfolds in cycles of \num{2048} blocks. At the beginning of each
 cycle, a random seed is derived from numbers that block miners chose and committed

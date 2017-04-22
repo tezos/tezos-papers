@@ -325,7 +325,7 @@ and may not make any system call.
 These functions are called through the \textbf{apply} function of the protocol
 which returns the new \textbf{Context}.
 
-Many conditions can trigger a change of protocol \change {(protocol upgrade votes will be much more frequent in the first year in order to allow for rapid iteration. As a security measure, the Tezos foundation will have a veto power expiring after twelve months, until we rule out any kinks in the voting procedure.)}. In its simplest version,
+Many conditions can trigger a change of protocol. In its simplest version,
 a stakeholder vote triggers a change of protocol. More complicated rules
 can be progressively voted in. For instance, if the stakeholder desire they
 may pass an amendment that will require further amendments to provide a
@@ -365,8 +365,8 @@ algorithm.
 \subsection{Economy}
 
 \subsubsection{Coins}
-There are initially $\num{10000000000}$ (ten billion) coins \change{(the initial extent of the token supply will be the number of tokens issued during the crowdsale and not specifically “10 billion”, an arbitrary placeholder)}, divisible up to two
-decimal places \change{(for the sake of precision we will in actuality be using eight digits after the decimal)}. We suggest that a single coin be referred to as a ``tez''
+There are initially $\num{10000000000}$ (ten billion) coins \change{(the initial extent of the token supply will be the number of tokens issued during the crowdsale and not specifically “10 billion”, which was merely a placeholder. This change in size has no effect on the principal at hand)}, divisible up to two
+decimal places \change{(for the sake of precision we may in actuality be using eight digits after the decimal)}. We suggest that a single coin be referred to as a ``tez''
 and that the smallest unit simply as a cent. We also suggest to use the
 symbol \tz~(\verb!\ua729!, ``Latin small letter tz'') to represent a tez.
 Therefore 1 cent = \tz\num{0.01} = one hundreth of a tez.
@@ -375,11 +375,11 @@ Therefore 1 cent = \tz\num{0.01} = one hundreth of a tez.
 
 \paragraph{Principle}
 We conjecture that the security of any decentralised currency requires
-to incentivize the participants with a pecuniary reward. As explained in the
+to incentivize the participants with a pecuniary reward \change {(we are in the process of finalizing the rewards schedule at the moment)}. As explained in the
 position paper, relying on transaction costs alone suffers from a tragedy of the
 commons. In Tezos, we rely on the combination of a bond and a reward.
 
-Bonds are one year \change {(bonds will now only last a single cycle, given the high opportunity cost and little benefit to security of a long bond)} security deposits purchased by miners \change {(endorsers will also be required to purchase bonds)}.
+Bonds are one year \change {(bonds will now only last a single cycle, given the high opportunity cost and little benefit to security of extending the bonding period past one cycle)} security deposits purchased by miners \change {(endorsers will also be required to purchase bonds)}.
 In the event of a double signing, these bonds are forfeited.
 
 After a year \change {(cycle)}, the miners \change {(and endorsers)} receive a reward along with their bond to compensate
@@ -401,7 +401,7 @@ Thus, assuming a mining rate of one block per minute, about 8\% of the initial
 money mass should be held in the form of safety bonds after the first year.
 
 The reward schedule implies at most a 5.4\% \emph{nominal} inflation
-rate. \emph{Nominal} inflation is neutral, it neither enrishes nor
+rate \change {(the total block rewards will still start at about 5\% per year, but we may add an asymptotic cap to the total number of tokens. We think it’s irrelevant when the governance model is aligned with the token holder’s interest, but it is important to some people so we’re reluctantly considering it)}. \emph{Nominal} inflation is neutral, it neither enrishes nor
 impoverishes anyone\footnote{In contrast, Bitcoin's mining inflation impoverishes
 Bitcoin holders as a whole, and central banking enrishes the financial
 sector at the expense of savers}.
@@ -411,7 +411,7 @@ from the number of blocks. This is to remove uncertainty as to the length of
 the commitment made by miners. 
 
 \paragraph{Looking forward}
-The proposed reward gives miners a 33\% return on their bond \change {(the total block rewards will still start at about 5\% per year, but we may add an asymptotic cap to the total number of tokens. We think it’s irrelevant when the governance model is aligned with the token holder’s interest, but it is important to some people so we’re reluctantly considering it)}.
+The proposed reward gives miners a 33\% return on their bond \change {(we're currently revising these parameters but will soon finalize a method that makes sense for all parties)}.
 This return needs to be high in the early days as miners and signers commit
 to hold a potentially volatile asset for an entire year \change {(bonds will only last for a cycle and not a full year)}.
 
@@ -422,7 +422,7 @@ achieved, though it's not clear there would be any point in doing so.
 \subsubsection{Lost coins}
 In order to reduce uncertainty regarding the monetary mass, addresses
 showing no activity for over a year (as determined by timestamps)
-are destroyed along with the coins they contain \change {(inactive addresses will no longer lose their funds after one year as initially proposed in the white paper, they will only lose their staking rights until they become active again. What it means is that if an address is inactive, it will not be selected to create blocks (which would slow down the consensus algorithm), and it will not be allowed to vote until it is reactivated (to avoid uncertainty about participation rate). This also affects governance)}.
+are destroyed along with the coins they contain \change {(inactive addresses will no longer lose their funds after one year as initially proposed in the white paper, they will only lose their staking rights until they become active again. What it means is that if an address is inactive, it will not be selected to create blocks (which would slow down the consensus algorithm), and it will not be allowed to vote until it is reactivated (to avoid uncertainty about participation rate)}.
 
 \subsubsection{Amendment rules}
 Amendments are adopted over election cycles lasting $N = 2^{17} = \num{131072}$
@@ -430,7 +430,7 @@ blocks each. Given the  a one minute block interval, this is about three
 calendar months. The election cycle is itself divided in four quarters of
 $2^{15} = \num{32768}$ blocks. This cycle is relatively short to encourage early
 improvements, but it is expected that further amendments will increase the
-length of the cycle. Adoption requires a certain quorum to be met. This quorum
+length of the cycle \change {(protocol upgrade votes will be much more frequent in the first year in order to allow for rapid iteration. As a security measure, the Tezos foundation will have a veto power expiring after twelve months, until we rule out any kinks in the voting procedure)}. Adoption requires a certain quorum to be met. This quorum
 starts at $Q = 80\%$ but dynamically adapts to reflect the average
 participation. This is necessary if only to deal with lost coins.
  
@@ -478,7 +478,7 @@ Each block is mined by a random stakeholder (the miner) and includes
 multiple signatures of the previous block provided by random 
 stakeholders (the signers). Mining and signing both offer a small reward but
 also require making a one year \change {{unbonding will happen after one cycle, and not one year as initially suggested. Prolonging the period longer than a cycle did not really improve security at the cost of immobilizing a lot of capital)} safety deposit to be
-forfeited in the event of a double mining or double signing \change {{it appears you've already changed this, as the Medium article states that signers, assuming this is the same as 'endorsers', were not originally but now are required to bond)}.
+forfeited in the event of a double mining or double signing.
 
 The protocol unfolds in cycles of \num{2048} blocks. At the beginning of each
 cycle, a random seed is derived from numbers that block miners chose and committed

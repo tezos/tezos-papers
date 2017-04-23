@@ -43,8 +43,7 @@ but something like it.''}}
 
 \begin{abstract}
 We present Tezos, a generic and self-amending crypto-ledger. Tezos can
-instantiate any blockchain based ledger \change{(we removed the ability to instantiate
-the Doge blockchain which must remain the one and only)}. The operations of a regular blockchain
+instantiate any blockchain based ledger. The operations of a regular blockchain
 are implemented as a purely functional module abstracted into a shell
 responsible for network operations. Bitcoin, Ethereum, Cryptonote, etc. can all
 be represented within Tezos by implementing the proper interface to the network
@@ -395,16 +394,20 @@ In the seed protocol, mining a block offers a reward of \tz\num{512} and
 requires a bond of \tz\num{1536}. Signing a block offers a reward of
 $32\Delta T^{-1}$ tez where $\Delta T$ is the time interval in minutes between
 the block being signed and its predecessor. There are up to 16 signatures per block
-and signing requires no bond.
+and signing requires no bond.\change{These numbers were based on a supply of 10 billions
+  tokens and we will tweak them accordingly. We may increase the number of signatures
+  per block as well as we've found in simulations it can strongly increase
+  the difficulty of forks.}
 
 Thus, assuming a mining rate of one block per minute, about 8\% of the initial
 money mass should be held in the form of safety bonds after the first year.
+\change{subject to change based on the adjustment of the parameters above}.
 
 The reward schedule implies at most a 5.4\% \emph{nominal} inflation
 rate \change {(the total block rewards will still start at about 5\% per year, but we may add an asymptotic cap to the total number of tokens. We think it’s irrelevant when the governance model is aligned with the token holder’s interest, but it is important to some people so we’re reluctantly considering it)}. \emph{Nominal} inflation is neutral, it neither enrishes nor
 impoverishes anyone\footnote{In contrast, Bitcoin's mining inflation impoverishes
-Bitcoin holders as a whole, and central banking enrishes the financial
-sector at the expense of savers}.
+  Bitcoin holders as a whole, and central banking enrishes the financial
+  sector at the expense of savers}.
 
 Note that the period of a year is determined from the block's timestamps, not
 from the number of blocks. This is to remove uncertainty as to the length of
@@ -477,7 +480,7 @@ are explained in more details below.
 Each block is mined by a random stakeholder (the miner) and includes
 multiple signatures of the previous block provided by random 
 stakeholders (the signers). Mining and signing both offer a small reward but
-also require making a one year \change {{unbonding will happen after one cycle, and not one year as initially suggested. Prolonging the period longer than a cycle did not really improve security at the cost of immobilizing a lot of capital)} safety deposit to be
+also require making a one year \change{(unbonding will happen after one cycle, and not one year as initially suggested. Prolonging the period longer than a cycle did not really improve security at the cost of immobilizing a lot of capital)} safety deposit to be
 forfeited in the event of a double mining or double signing.
 
 The protocol unfolds in cycles of \num{2048} blocks. At the beginning of each

@@ -486,7 +486,7 @@ forfeited in the event of a double mining or double signing.
 The protocol unfolds in cycles of \num{2048} blocks. At the beginning of each
 cycle, a random seed is derived from numbers that block miners chose and committed
 to in the penultimate cycle, and revealed in the last. Using this random seed,
-a follow the coin strategy is used to allocate migning rights and signing rights
+a follow the coin strategy is used to allocate mining rights and signing rights
 to a specific addresses for the next cycle. See figure \ref{fig:pos_figure}.
 
 \begin{figure}[b!]
@@ -517,7 +517,7 @@ score.
 Every block mined carries a hash commitment to a random number chosen by the
 miner. These numbers must be revealed in the next cycle under penalty of
 forfeiting the safety bond. This harsh penalty is meant to prevent selective
-whitholding of the numbers which could be sued to attack the entropy of the seed. 
+whitholding of the numbers which could be used to attack the entropy of the seed. 
 
 Malicious miners in the next cycle could attempt to censor such reveals, however
 since multiple numbers may be revealed in a single block, they are very unlikely
@@ -614,7 +614,7 @@ To avoid a potentially problematic situation were no stakeholder made a
 safety deposit to mine a particular block, after a 16 minutes delay, the
 block may be mined without a deposit.
 
-Bonds are implicitely returned to their buyers immediately in any chain
+Bonds are implicitly returned to their buyers immediately in any chain
 where they do not mine the block.
 
 \subsubsection{Signing blocks}

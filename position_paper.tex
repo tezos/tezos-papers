@@ -211,7 +211,7 @@ the benevolence of one or two pool operators to secure the currency.
 A conspiracy of miners holding more than 50\% of the hashing power
 is known as 51\% attack\cite{51pct}. It allows the attackers
 to prevent transactions from being made, to undo transactions,
-to steal recently minted coins and to to double spend\cite{centralized}.
+to steal recently minted coins and to double spend\cite{centralized}.
 
 A centralized mint signing blocks would be just as secure,
 and far less wasteful, as a miner controlling 51\% of the hashing power.
@@ -373,7 +373,7 @@ To address this problem, Ethereum has devised a system by which the miner
 validating the transaction requires a fee proportional to the complexity
 and number of steps needed to execute the contract.
 
-Yet, for  the blockchain to be secure, \emph{all} the active nodes need to
+Yet, for the blockchain to be secure, \emph{all} the active nodes need to
 validate the transaction. A malicious miner could include in his block a
 transaction that he crafted specially to run into an infinite loop and pay
 himself an exorbitant fee for validating this transaction. Other miners could
@@ -541,7 +541,7 @@ In order for the protocol to remain generic, we define the following interface.
 We want our blockchain to represent the current ``state'' of the economy,
 which we call in Tezos the \textbf{Context}.
 This could include the balances of the various accounts
-and other informations such as the current block number.
+and other information such as the current block number.
 Blocks are seen as operators that transform an old state into a new state.
 
 In this respect, a protocol can be described by only two functions:

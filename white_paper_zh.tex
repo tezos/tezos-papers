@@ -323,7 +323,7 @@ end
 其次，原则上我们需要有对比不同协议状态的能力。具体的协议修改规则可能让这个发生的可能性变得非常低，但是网络Shell对此并不知晓。
 
 %% The operations \textbf{parse\_block\_header} and \textbf{parse\_operation} are
-%% exposed to the  shell and allow it to pass fully typed operations and blocks to
+%% exposed to the shell and allow it to pass fully typed operations and blocks to
 %% the protocol but also to check whether these operations and blocks are
 %% well-formed, before deciding to relay operations or to add blocks to the local
 %% block tree database.
@@ -346,7 +346,7 @@ end
 
 \subsubsection{协议进化}
 
-%% Tezos's most powerful feature is its ability to implement protocol capable
+%% Tezos' most powerful feature is its ability to implement protocol capable
 %% of self-amendment. This is achieved by exposing two procedures functions to the
 %% protocol:
 Tezos最强大的特性是它的协议自我修正能力，主要通过暴露给协议两个过程函数实现：
@@ -497,7 +497,7 @@ Tezos一开始就会有一百亿个币，这些币小数点后保留两位。一
 %% to hold a potentially volatile asset for an entire year.
 这个奖励机制将给矿工33\%的债券回报。这个回报在初期必须要足够高，因为矿工和签名者需要共同持有一整年易波动的债券资产。
 
-%% However, as Tezos mature, this return could be gradually lowered to the
+%% However, as Tezos matures, this return could be gradually lowered to the
 %% prevailing interest rate. A nominal rate of inflation below 1\% could safely be
 %% achieved, though it's not clear there would be any point in doing so.
 但是，随着Tezos的成熟，这个回报可以被逐渐降低到一个同期的主流利率水平，并长期维持低于1\%的形式通胀率，但是这样做的合理性还需要进一步论证。
@@ -510,7 +510,7 @@ Tezos一开始就会有一百亿个币，这些币小数点后保留两位。一
 
 \subsubsection{修改规则}
 %% Amendments are adopted over election cycles lasting $N = 2^{17} = \num{131072}$
-%% blocks each. Given the  a one minute block interval, this is about three
+%% blocks each. Given the one minute block interval, this is about three
 %% calendar months. The election cycle is itself divided in four quarters of
 %% $2^{15} = \num{32768}$ blocks. This cycle is relatively short to encourage early
 %% improvements, but it is expected that further amendments will increase the
@@ -583,7 +583,7 @@ $$Q \leftarrow 0.8 Q + 0.2 q.$$
 %% cycle, a random seed is derived from numbers that block miners chose and committed
 %% to in the penultimate cycle, and revealed in the last. Using this random seed,
 %% a follow the coin strategy is used to allocate migning rights and signing rights
-%% to a specific addresses for the next cycle. See figure \ref{fig:pos_figure}.
+%% to a specific address for the next cycle. See figure \ref{fig:pos_figure}.
 这个协议以\num{2048}个区块为周期运行。在每个周期的开始，矿工选择数字做成随机种子，提交至倒数第二个周期，并在最后一个周期展现出来。
 通过使用随机种子，“跟随币”策略分配给指定地址的下一个周期的挖矿权以及签名权，见下图\ref{fig:pos_figure}。
 
@@ -618,7 +618,7 @@ $$Q \leftarrow 0.8 Q + 0.2 q.$$
 %% Every block mined carries a hash commitment to a random number chosen by the
 %% miner. These numbers must be revealed in the next cycle under penalty of
 %% forfeiting the safety bond. This harsh penalty is meant to prevent selective
-%% whitholding of the numbers which could be sued to attack the entropy of the seed.
+%% withholding of the numbers which could be sued to attack the entropy of the seed.
 每一个被挖的块都会携带一个由矿工选择的随机数的哈希值。这些数字必须在下一个周期的担保金没收时间前被公开。
 这个严厉的惩罚措施可以防止因矿工拒不提供随机数而有可能导致的对种子进行的熵攻击。
 
@@ -628,7 +628,7 @@ $$Q \leftarrow 0.8 Q + 0.2 q.$$
 恶意的矿工在下一个周期会试图阻止该随机数被公开，但是因为多个随机数可能会在单个区块中被公开，这样的企图很难成功。
 
 %% All the revealed numbers in a cycle are combined in a hash list and the seed is
-%% derived  from the root using the \verb!scrypt! key derivation function. The key
+%% derived from the root using the \verb!scrypt! key derivation function. The key
 %% derivation should be tuned so that deriving the seed takes on the order of a
 %% fraction of a percent of the average validation time for a block on a typical
 %% desktop PC.
@@ -652,7 +652,7 @@ $$Q \leftarrow 0.8 Q + 0.2 q.$$
 当然，单个分不能够直接追踪。但是可以通过使用一些规则描述当输入集成起并通过多个输出花出时发生的情况。
 
 %% In the end, the algorithm keeps track of a set of intervals associated with each
-%% key. Each intervals represents a ``range'' of satoshis.
+%% key. Each interval represents a ``range'' of satoshis.
 %% Unfortunately, over time, the database becomes more and more fragmented,
 %% increasing bloat on the client side.
 最后, 算法持续追踪每一组和密钥相关联的间隔。每个间隔表示聪区间的范围。不幸的是，随着时间的延长，数据库变得越来越零碎，使得客户端膨胀。
@@ -715,7 +715,7 @@ LIFO队列优先级保证了在一个秘密分叉上挖矿的攻击者无法通�
 %% on the expectation of the maximum of W normally distributed variable}
 %% $$\left(\sqrt{\frac{2\log(W)}{N}}\sqrt{\frac{1-f}{f}}\right)fN$$
 %% blocks. For instance, an attacker controlling $f = 10\%$ of the rolls should
-%% expect  to mine about $205$ blocks per cycle. In a secret fork where he attempts
+%% expect to mine about $205$ blocks per cycle. In a secret fork where he attempts
 %% to control the seed, assuming he computed over a trillion hashes, he could
 %% assign itself about $302$ blocks, or about $14.7\%$ of the blocks. Note that:
 如果一个攻击者通过$W$个不同种子进行穷举式搜索，那么他的攻击的优势至多是$$\left(\sqrt{\frac{2\log(W)}{N}}\sqrt{\frac{1-f}{f}}\right)fN$$个区块。
@@ -981,7 +981,7 @@ type transaction = {
 如果账户同意，签名密钥可以通过发起签名信息请求修改。
 
 \section{总结}
-%% We feel we've built an appealing seed protocol. However, Tezos's true potential
+%% We feel we've built an appealing seed protocol. However, Tezos' true potential
 %% lies in putting the stakeholders in charge of deciding on a protocol that they
 %% feel best serves them.
 我们认为，我们已经构建一个较大吸引力的种子协议。当然，Tezos的真正的潜力存在于：让持币者掌控最优质服务协议的选择权利。

@@ -274,7 +274,7 @@ amendment rules are likely to make this extremely unlikely to ever happen,
 but the network shell does not know that.
 
 The operations \textbf{parse\_block\_header} and \textbf{parse\_operation} are
-exposed to the  shell and allow it to pass fully typed operations and blocks to
+exposed to the shell and allow it to pass fully typed operations and blocks to
 the protocol but also to check whether these operations and blocks are
 well-formed, before deciding to relay operations or to add blocks to the local
 block tree database.
@@ -292,7 +292,7 @@ protocol itself but is of great use to miners attempting to form valid blocks.
 
 \subsubsection{Amending the protocol}
 
-Tezos's most powerful feature is its ability to implement protocol capable
+Tezos' most powerful feature is its ability to implement protocol capable
 of self-amendment. This is achieved by exposing two procedures functions to the
 protocol:
 
@@ -418,7 +418,7 @@ The proposed reward gives miners a 33\% return on their bond \change {(we're cur
 This return needs to be high in the early days as miners and signers commit
 to hold a potentially volatile asset for an entire year \change {(bonds will only last for a cycle and not a full year)}.
 
-However, as Tezos mature, this return could be gradually lowered to the
+However, as Tezos matures, this return could be gradually lowered to the
 prevailing interest rate. A nominal rate of inflation below 1\% could safely be
 achieved, though it's not clear there would be any point in doing so.
 
@@ -429,7 +429,7 @@ are destroyed along with the coins they contain \change {(inactive addresses wil
 
 \subsubsection{Amendment rules}
 Amendments are adopted over election cycles lasting $N = 2^{17} = \num{131072}$
-blocks each. Given the  a one minute block interval, this is about three
+blocks each. Given the one minute block interval, this is about three
 calendar months. The election cycle is itself divided in four quarters of
 $2^{15} = \num{32768}$ blocks. This cycle is relatively short to encourage early
 improvements, but it is expected that further amendments will increase the
@@ -487,7 +487,7 @@ The protocol unfolds in cycles of \num{2048} blocks. At the beginning of each
 cycle, a random seed is derived from numbers that block miners chose and committed
 to in the penultimate cycle, and revealed in the last. Using this random seed,
 a follow the coin strategy is used to allocate mining rights and signing rights
-to a specific addresses for the next cycle. See figure \ref{fig:pos_figure}.
+to a specific address for the next cycle. See figure \ref{fig:pos_figure}.
 
 \begin{figure}[b!]
   \centering
@@ -517,7 +517,7 @@ score.
 Every block mined carries a hash commitment to a random number chosen by the
 miner. These numbers must be revealed in the next cycle under penalty of
 forfeiting the safety bond. This harsh penalty is meant to prevent selective
-whitholding of the numbers which could be used to attack the entropy of the seed. 
+withholding of the numbers which could be used to attack the entropy of the seed. 
 
 Malicious miners in the next cycle could attempt to censor such reveals, however
 since multiple numbers may be revealed in a single block, they are very unlikely
@@ -542,7 +542,7 @@ Instead, rules are applied to describe what happens when inputs are combined and
 spent over multiple output.
 
 In the end, the algorithm keeps track of a set of intervals associated with each
-key. Each intervals represents a ``range'' of satoshis.
+key. Each interval represents a ``range'' of satoshis.
 Unfortunately, over time, the database becomes more and more fragmented,
 increasing bloat on the client side.
 
@@ -591,7 +591,7 @@ on the expectation of the maximum of W normally distributed variable}
 $$\left(\sqrt{\frac{2\log(W)}{N}}\sqrt{\frac{1-f}{f}}\right)fN$$
 
 blocks. For instance, an attacker controlling $f = 10\%$ of the rolls should
-expect  to mine about $205$ blocks per cycle. In a secret fork where he attempts
+expect to mine about $205$ blocks per cycle. In a secret fork where he attempts
 to control the seed, assuming he computed over a trillion hashes, he could
 assign itself about $302$ blocks, or about $14.7\%$ of the blocks. Note that:
 \begin{itemize}
@@ -812,7 +812,7 @@ message requesting the change.
 
 
 \section{Conclusion}
-We feel we've built an appealing seed protocol. However, Tezos's true potential
+We feel we've built an appealing seed protocol. However, Tezos' true potential
 lies in putting the stakeholders in charge of deciding on a protocol that they
 feel best serves them.
 
